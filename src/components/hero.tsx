@@ -11,7 +11,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[100svh] w-full flex flex-col justify-between pt-16 sm:pt-20 md:pt-24 pb-4 sm:pb-8 px-4 sm:px-8 lg:px-14 max-w-7xl mx-auto overflow-hidden bg-fest-black text-fest-warm select-none"
+      className="relative min-h-[100svh] w-full flex flex-col justify-between pt-16 sm:pt-20 md:pt-24 pb-4 sm:pb-8 px-4 sm:px-8 lg:px-14 max-w-7xl mx-auto overflow-hidden bg-fest-black text-fest-warm select-none scroll-mt-24"
     >
       {/* Top Festival Sub-Header */}
       <motion.div
@@ -112,7 +112,7 @@ export function Hero() {
         >
           <a
             href="#programs"
-            className="group relative inline-flex items-center gap-3 sm:gap-3.5 px-6 sm:px-9 py-3 sm:py-4 bg-fest-accent text-fest-black font-display font-black text-xs sm:text-sm tracking-widest uppercase rounded-full hover:bg-fest-warm transition-all duration-300 shadow-[0_4px_25px_rgba(255,61,0,0.35)] hover:shadow-[0_8px_35px_rgba(245,242,235,0.3)] active:scale-95"
+            className="group relative inline-flex items-center gap-3 sm:gap-3.5 px-6 sm:px-9 py-3 sm:py-4 bg-fest-accent text-fest-black font-display font-black text-xs sm:text-sm tracking-widest uppercase rounded-full hover:bg-fest-warm transition-all duration-300 shadow-[0_4px_25px_rgba(255,61,0,0.35)] hover:shadow-[0_8px_35px_rgba(245,242,235,0.3)]"
           >
             <span>EXPLORE PROGRAMS</span>
             <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-fest-black/20 flex items-center justify-center group-hover:translate-x-1.5 transition-transform duration-300">

@@ -44,7 +44,7 @@ export function Navbar() {
         {/* Brand identity */}
         <a
           href="#"
-          className="group flex items-center space-x-2 sm:space-x-3 text-fest-warm transition-transform active:scale-95"
+          className="group flex items-center space-x-2 sm:space-x-3 text-fest-warm"
         >
           <div className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-fest-accent/20 border border-fest-accent/40 shrink-0">
             <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-fest-accent animate-pulse" />
@@ -99,7 +99,7 @@ export function Navbar() {
         {/* Mobile menu trigger */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden flex items-center justify-center w-8 h-8 rounded-full border border-white/10 text-fest-warm hover:bg-white/5 active:scale-90 transition-transform"
+          className="md:hidden flex items-center justify-center w-8 h-8 rounded-full border border-white/10 text-fest-warm hover:bg-white/5"
           aria-label="Toggle navigation"
         >
           {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Calendar, Clock, MapPin, Tag, AlertCircle } from "lucide-react";
+import { ArrowUpRight, Calendar, MapPin, Tag, AlertCircle } from "lucide-react";
 
 interface Program {
   id: string;
@@ -73,18 +73,44 @@ const programs: Program[] = [
   },
 ];
 
-// Custom Vector Artwork Renderers
+// Custom Vector Artwork Renderers with dynamic festival animations
 function ProgramArtwork({ type }: { type: Program["artType"] }) {
   if (type === "dance") {
     return (
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-xl sm:rounded-2xl border border-fest-border p-4 sm:p-6">
+      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6">
         <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
-          <circle cx="200" cy="120" r="85" stroke="#FF3D00" strokeWidth="1.5" strokeDasharray="6 4" fill="none" className="animate-spin" style={{ animationDuration: "25s" }} />
+          <circle
+            cx="200"
+            cy="120"
+            r="85"
+            stroke="#FF3D00"
+            strokeWidth="1.5"
+            strokeDasharray="6 4"
+            fill="none"
+            className="animate-spin"
+            style={{ animationDuration: "25s" }}
+          />
           <circle cx="200" cy="120" r="50" stroke="#F5F2EB" strokeWidth="1" fill="none" opacity="0.3" />
-          <path d="M 40 120 Q 120 40, 200 120 T 360 120" stroke="#FF3D00" strokeWidth="2.5" fill="none" />
+          <motion.path
+            d="M 40 120 Q 120 40, 200 120 T 360 120"
+            stroke="#FF3D00"
+            strokeWidth="2.5"
+            fill="none"
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
           <path d="M 40 120 Q 120 200, 200 120 T 360 120" stroke="#F5F2EB" strokeWidth="1.5" opacity="0.8" fill="none" />
           <path d="M 100 120 Q 160 80, 200 120 T 300 120" stroke="#FF3D00" strokeWidth="1" opacity="0.5" fill="none" />
-          <text x="200" y="125" textAnchor="middle" fill="#FFFFFF" fontSize="20" fontFamily="monospace" fontWeight="bold" letterSpacing="5">
+          <text
+            x="200"
+            y="125"
+            textAnchor="middle"
+            fill="#FFFFFF"
+            fontSize="20"
+            fontFamily="monospace"
+            fontWeight="bold"
+            letterSpacing="5"
+          >
             RHYTHM // BATTLE
           </text>
         </svg>
@@ -94,12 +120,12 @@ function ProgramArtwork({ type }: { type: Program["artType"] }) {
 
   if (type === "music") {
     return (
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-xl sm:rounded-2xl border border-fest-border p-4 sm:p-6">
+      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6">
         <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
           {[20, 50, 80, 110, 140, 170, 200, 230, 260, 290, 320, 350, 380].map((x, i) => {
             const h = 40 + ((i * 37) % 110);
             return (
-              <line
+              <motion.line
                 key={i}
                 x1={x}
                 y1={120 - h / 2}
@@ -109,10 +135,30 @@ function ProgramArtwork({ type }: { type: Program["artType"] }) {
                 strokeWidth="4"
                 strokeLinecap="round"
                 opacity={i % 3 === 0 ? 1 : 0.4}
+                animate={{
+                  y1: [120 - h / 2, 120 - (h * 0.35) / 2, 120 - (h * 1.15) / 2, 120 - h / 2],
+                  y2: [120 + h / 2, 120 + (h * 0.35) / 2, 120 + (h * 1.15) / 2, 120 + h / 2],
+                }}
+                transition={{
+                  duration: 0.8 + (i % 4) * 0.2,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut",
+                  delay: (i * 0.06),
+                }}
               />
             );
           })}
-          <circle cx="200" cy="120" r="30" fill="#060607" stroke="#FF3D00" strokeWidth="2" />
+          <motion.circle
+            cx="200"
+            cy="120"
+            r="30"
+            fill="#060607"
+            stroke="#FF3D00"
+            strokeWidth="2"
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+          />
           <circle cx="200" cy="120" r="8" fill="#F5F2EB" />
           <text x="200" y="215" textAnchor="middle" fill="#FF3D00" fontSize="12" fontFamily="monospace" letterSpacing="4">
             AMPLIFIED FREQ • 128 BPM
@@ -124,11 +170,21 @@ function ProgramArtwork({ type }: { type: Program["artType"] }) {
 
   if (type === "photography") {
     return (
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-xl sm:rounded-2xl border border-fest-border p-4 sm:p-6">
+      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6">
         <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
           <rect x="70" y="30" width="260" height="180" rx="8" stroke="#F5F2EB" strokeWidth="1.5" opacity="0.3" fill="none" />
           <circle cx="200" cy="120" r="65" stroke="#FF3D00" strokeWidth="2" fill="none" />
-          <circle cx="200" cy="120" r="35" stroke="#F5F2EB" strokeWidth="1" strokeDasharray="4 4" fill="none" />
+          <circle
+            cx="200"
+            cy="120"
+            r="35"
+            stroke="#F5F2EB"
+            strokeWidth="1"
+            strokeDasharray="4 4"
+            fill="none"
+            className="animate-spin"
+            style={{ animationDuration: "16s" }}
+          />
           <line x1="180" y1="120" x2="220" y2="120" stroke="#FF3D00" strokeWidth="2" />
           <line x1="200" y1="100" x2="200" y2="140" stroke="#FF3D00" strokeWidth="2" />
           <text x="85" y="55" fill="#FF3D00" fontSize="11" fontFamily="monospace" letterSpacing="2">
@@ -144,7 +200,7 @@ function ProgramArtwork({ type }: { type: Program["artType"] }) {
 
   // Coding
   return (
-    <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-xl sm:rounded-2xl border border-fest-border p-4 sm:p-6 font-mono">
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6 font-mono">
       <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
         <text x="30" y="45" fill="#FF3D00" fontSize="13" fontFamily="monospace" fontWeight="bold">
           fn main() {"{"}
@@ -170,18 +226,17 @@ function ProgramArtwork({ type }: { type: Program["artType"] }) {
   );
 }
 
-// Typing Text Effect Helper
-function TypewriterText({ text, speed = 14 }: { text: string; speed?: number }) {
-  const [displayed, setDisplayed] = useState("");
+// Typing Text Effect Helper - Rock-solid layout with zero container collapse or shrinking
+function TypewriterText({ text, speed = 12 }: { text: string; speed?: number }) {
+  const [displayedLength, setDisplayedLength] = useState(0);
 
   useEffect(() => {
-    setDisplayed("");
+    setDisplayedLength(0);
     let index = 0;
     const interval = setInterval(() => {
-      if (index <= text.length) {
-        setDisplayed(text.slice(0, index));
-        index++;
-      } else {
+      index++;
+      setDisplayedLength(index);
+      if (index >= text.length) {
         clearInterval(interval);
       }
     }, speed);
@@ -189,44 +244,52 @@ function TypewriterText({ text, speed = 14 }: { text: string; speed?: number }) 
     return () => clearInterval(interval);
   }, [text, speed]);
 
+  const visibleText = text.slice(0, displayedLength);
+  const hiddenText = text.slice(displayedLength);
+
   return (
     <span>
-      {displayed}
-      <span className="inline-block w-1.5 h-3.5 bg-fest-accent ml-0.5 animate-pulse align-middle" />
+      <span>{visibleText}</span>
+      {displayedLength < text.length && (
+        <span className="inline-block w-1.5 h-3 bg-fest-accent mx-0.5 animate-pulse align-middle" />
+      )}
+      <span className="opacity-0 select-none pointer-events-none" aria-hidden="true">
+        {hiddenText}
+      </span>
     </span>
   );
 }
 
-// Shared Program Detail Panel Content
+// Program Detail Card - Constant rock-solid size, strictly NO shrinking on hover
 function ProgramDetailsCard({ program }: { program: Program }) {
   return (
-    <div className="flex flex-col space-y-5">
-      {/* Top Pop-up Artwork Frame */}
-      <div className="h-44 sm:h-52 w-full">
+    <div className="flex flex-col space-y-4">
+      {/* Top Artwork Frame */}
+      <div className="h-36 sm:h-44 w-full shrink-0">
         <ProgramArtwork type={program.artType} />
       </div>
 
       {/* Program Name & Category */}
-      <div className="border-b border-fest-border pb-3.5">
-        <div className="flex items-center justify-between text-[11px] font-mono text-fest-accent mb-1">
+      <div className="border-b border-fest-border pb-3">
+        <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-fest-accent mb-1">
           <span>ARENA SPECIFICATION // {program.number}</span>
           <span className="px-2 py-0.5 rounded bg-fest-accent/15 text-fest-accent text-[9px] sm:text-[10px] font-bold">
             {program.badge}
           </span>
         </div>
-        <h4 className="font-display font-black text-2xl sm:text-3xl text-fest-warm">
+        <h4 className="font-display font-black text-xl sm:text-2xl text-fest-warm">
           {program.name}
         </h4>
       </div>
 
-      {/* Typed Out Information Details */}
-      <div className="space-y-3 font-mono text-[11px] sm:text-xs text-fest-muted">
+      {/* Information Details with smooth typewriter animation & zero layout shift */}
+      <div className="space-y-2.5 font-mono text-[11px] sm:text-xs text-fest-muted">
         <div className="flex items-start gap-2.5 sm:gap-3">
           <Tag className="w-3.5 h-3.5 text-fest-accent shrink-0 mt-0.5" />
           <div className="flex-1">
             <span className="text-fest-warm font-semibold">ENTRY FEE: </span>
             <span className="text-fest-warm">
-              <TypewriterText text={program.fee} speed={15} />
+              <TypewriterText text={program.fee} speed={12} />
             </span>
           </div>
         </div>
@@ -236,7 +299,7 @@ function ProgramDetailsCard({ program }: { program: Program }) {
           <div className="flex-1">
             <span className="text-fest-warm font-semibold">SCHEDULE: </span>
             <span className="text-fest-warm">
-              <TypewriterText text={`${program.date} (${program.time})`} speed={12} />
+              <TypewriterText text={`${program.date} (${program.time})`} speed={10} />
             </span>
           </div>
         </div>
@@ -246,7 +309,7 @@ function ProgramDetailsCard({ program }: { program: Program }) {
           <div className="flex-1">
             <span className="text-fest-warm font-semibold">VENUE: </span>
             <span className="text-fest-warm">
-              <TypewriterText text={program.venue} speed={10} />
+              <TypewriterText text={program.venue} speed={9} />
             </span>
           </div>
         </div>
@@ -256,17 +319,17 @@ function ProgramDetailsCard({ program }: { program: Program }) {
           <div className="flex-1 leading-relaxed">
             <span className="text-fest-warm font-semibold">RULES: </span>
             <span className="text-fest-muted">
-              <TypewriterText text={program.requirements} speed={8} />
+              <TypewriterText text={program.requirements} speed={7} />
             </span>
           </div>
         </div>
       </div>
 
       {/* Action Button: REGISTER */}
-      <div className="pt-2">
+      <div className="pt-1.5">
         <button
           type="button"
-          className="w-full py-3.5 sm:py-4 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs sm:text-sm tracking-widest uppercase hover:bg-fest-warm hover:shadow-[0_0_30px_rgba(245,242,235,0.4)] transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98]"
+          className="w-full py-3 sm:py-3.5 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs sm:text-sm tracking-widest uppercase hover:bg-fest-warm hover:shadow-[0_0_30px_rgba(245,242,235,0.4)] transition-colors duration-200 flex items-center justify-center gap-2 group cursor-pointer"
         >
           <span>REGISTER FOR {program.name}</span>
           <ArrowUpRight className="w-4 h-4 stroke-[3] group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform" />
@@ -283,80 +346,79 @@ export function ProgramsLineup() {
   return (
     <section
       id="programs"
-      className="relative py-20 sm:py-28 md:py-36 px-4 sm:px-8 lg:px-14 max-w-7xl mx-auto border-t border-fest-border bg-fest-black text-fest-warm"
+      className="relative py-14 sm:py-20 md:py-24 px-4 sm:px-8 lg:px-14 max-w-7xl mx-auto border-t border-fest-border bg-fest-black text-fest-warm scroll-mt-28 lg:scroll-mt-32"
     >
-      {/* Section Sub-header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-12 sm:mb-16 md:mb-20">
+      {/* Section Header - Scaled down to clean, refined proportions */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
         <div>
-          <div className="flex items-center gap-2 text-[10px] sm:text-xs font-mono tracking-widest text-fest-accent uppercase mb-2 sm:mb-3">
+          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono tracking-widest text-fest-accent uppercase mb-1.5 sm:mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-fest-accent animate-ping" />
             <span>01 // OFFICIAL FESTIVAL LINEUP</span>
           </div>
-          <h2 className="font-display font-black text-3xl sm:text-5xl md:text-6xl tracking-tight text-fest-warm">
+          <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl tracking-tight text-fest-warm">
             COMPETITIVE ARENAS
           </h2>
         </div>
 
-        <p className="max-w-md text-xs sm:text-sm text-fest-muted font-light leading-relaxed">
-          Select or hover each discipline to explore its arena specifications, venue timings, fee,
+        <p className="max-w-md text-xs sm:text-[13px] text-fest-muted font-light leading-relaxed">
+          Hover or select each discipline to explore its arena specifications, venue timings, fee,
           and participation criteria.
         </p>
       </div>
 
-      {/* Main Responsive Grid Layout */}
+      {/* Main Grid Layout - Exact Proportions of Image 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         
-        {/* Left Column: Interactive Festival Lineup Rows (7 Cols) */}
-        <div className="lg:col-span-7 flex flex-col space-y-3 sm:space-y-4">
+        {/* Left Column: Lineup Rows - Sleek, balanced sizing with zero scale/shrink */}
+        <div className="lg:col-span-7 flex flex-col space-y-2.5 sm:space-y-3">
           {programs.map((program) => {
             const isActive = program.id === activeId;
             return (
               <div key={program.id} className="flex flex-col">
-                {/* Lineup row button */}
+                {/* Lineup row button - Clean font scale, smooth translation and opacity */}
                 <motion.div
                   onMouseEnter={() => setActiveId(program.id)}
                   onClick={() => setActiveId(program.id)}
                   animate={{
-                    scale: isActive ? 1.01 : 1,
-                    x: isActive ? (typeof window !== "undefined" && window.innerWidth < 1024 ? 0 : 6) : 0,
-                    opacity: isActive ? 1 : 0.55,
+                    x: isActive ? 6 : 0,
+                    opacity: isActive ? 1 : 0.65,
                   }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  className={`group relative p-4 sm:p-7 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  className={`group relative p-4 sm:p-5 rounded-2xl border transition-colors duration-300 cursor-pointer ${
                     isActive
-                      ? "bg-fest-surface border-fest-accent shadow-[0_8px_30px_rgba(255,61,0,0.14)]"
-                      : "bg-fest-dark/50 border-fest-border hover:border-fest-warm/30 hover:opacity-85"
+                      ? "bg-fest-surface border-fest-accent shadow-[0_8px_30px_rgba(255,61,0,0.18)]"
+                      : "bg-fest-dark/50 border-fest-border hover:border-fest-warm/30 hover:opacity-90"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-baseline space-x-3 sm:space-x-5">
-                      <span className="font-mono text-xs sm:text-base tracking-widest text-fest-accent font-bold">
+                    <div className="flex items-baseline space-x-2.5 sm:space-x-4">
+                      <span className="font-mono text-xs sm:text-sm tracking-widest text-fest-accent font-bold">
                         {program.number}
                       </span>
                       <span className="text-white/20 select-none">—</span>
-                      <h3 className="font-display font-black text-xl sm:text-3xl md:text-5xl tracking-tight text-fest-warm group-hover:text-fest-accent transition-colors">
+                      <h3 className="font-display font-black text-xl sm:text-2xl md:text-3xl tracking-tight text-fest-warm group-hover:text-fest-accent transition-colors">
                         {program.name}
                       </h3>
                     </div>
 
-                    <div className="flex items-center space-x-2 sm:space-x-3">
-                      <span className="hidden xs:inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-mono tracking-widest uppercase border border-white/10 text-fest-muted">
+                    <div className="flex items-center space-x-2 sm:space-x-2.5">
+                      <span className="hidden xs:inline-block px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono tracking-widest uppercase border border-white/10 text-fest-muted">
                         {program.badge}
                       </span>
                       <div
-                        className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
                           isActive
                             ? "bg-fest-accent text-fest-black rotate-45"
                             : "bg-white/5 text-fest-muted group-hover:text-fest-warm"
                         }`}
                       >
-                        <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+                        <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Condensed Tagline visible in row */}
-                  <p className="mt-2 sm:mt-2.5 text-[11px] sm:text-xs md:text-sm text-fest-muted font-light pl-6 sm:pl-10">
+                  {/* Condensed Tagline */}
+                  <p className="mt-1.5 text-xs sm:text-[13px] text-fest-muted font-light pl-5 sm:pl-7">
                     {program.tagline}
                   </p>
                 </motion.div>
@@ -370,7 +432,7 @@ export function ProgramsLineup() {
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="overflow-hidden mt-3 mb-2 rounded-2xl border border-fest-accent/40 bg-fest-surface p-4 sm:p-6 shadow-[0_12px_40px_rgba(0,0,0,0.7)]"
+                        className="overflow-hidden mt-2.5 mb-2 rounded-2xl border border-fest-accent/40 bg-fest-surface p-4 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.8)]"
                       >
                         <ProgramDetailsCard program={program} />
                       </motion.div>
@@ -383,15 +445,16 @@ export function ProgramsLineup() {
         </div>
 
         {/* Right Column: Desktop Sticky Pop-up Artwork & Detailed Dossier (Visible on >= lg screens) */}
+        {/* Sleek padding and proportion - Smooth fade transition with strictly ZERO scale or shrinking */}
         <div className="hidden lg:block lg:col-span-5 sticky top-24 xl:top-28">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeProgram.id}
-              initial={{ opacity: 0, y: 15, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -15, scale: 0.98 }}
-              transition={{ duration: 0.25 }}
-              className="rounded-3xl border border-fest-border bg-fest-surface p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="rounded-3xl border border-fest-border bg-fest-surface p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
             >
               <ProgramDetailsCard program={activeProgram} />
             </motion.div>

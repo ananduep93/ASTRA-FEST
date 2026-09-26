@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer id="info" className="relative border-t border-fest-border bg-fest-black py-10 sm:py-14 px-4 sm:px-8 lg:px-14 text-fest-muted text-xs font-mono">
+    <footer id="info" className="relative border-t border-fest-border bg-fest-black py-10 sm:py-14 px-4 sm:px-8 lg:px-14 text-fest-muted text-xs font-mono scroll-mt-24">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-between gap-6 sm:gap-8 text-center md:text-left">
         
         {/* Left: Festival Brand & Host */}
