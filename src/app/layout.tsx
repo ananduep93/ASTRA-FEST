@@ -39,6 +39,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sans.variable} ${display.variable} ${mono.variable} dark`}>
+      <head>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root { --background: #060607; --foreground: #f5f2eb; }
+              html, body { background-color: #060607; color: #f5f2eb; color-scheme: dark; }
+              #scroll-sentinel { position: absolute; top: 0; left: 0; width: 100%; height: 20px; pointer-events: none; z-index: -10; }
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-void text-stellar-100 font-sans antialiased selection:bg-gold/20 selection:text-white">
         {children}
       </body>

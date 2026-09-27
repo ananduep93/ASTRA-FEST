@@ -9,11 +9,31 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const sentinel = document.querySelector("#scroll-sentinel");
+    if (!sentinel) {
+      let ticking = false;
+      const handleScroll = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            setScrolled(window.scrollY > 20);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setScrolled(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
   // Lock body scroll when mobile menu is open
@@ -29,7 +49,7 @@ export function Navbar() {
   }, [mobileMenuOpen]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-3 sm:px-6 py-3 sm:py-5 pointer-events-none pt-safe">
+    <header className="fixed top-5 sm:top-6 left-0 right-0 z-50 flex justify-center px-3.5 sm:px-6 pointer-events-none pt-safe">
       {/* iOS Liquid Glass Floating Dynamic Island Bar */}
       <div
         className={`pointer-events-auto w-full max-w-5xl flex items-center justify-between px-3.5 sm:px-7 py-2 sm:py-3 rounded-full transition-all duration-300 relative ${

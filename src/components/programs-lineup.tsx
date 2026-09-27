@@ -341,7 +341,13 @@ function ProgramDetailsCard({ program }: { program: Program }) {
 
 export function ProgramsLineup() {
   const [activeId, setActiveId] = useState<string>("dance");
+  const [mobileOpenId, setMobileOpenId] = useState<string | null>(null);
   const activeProgram = programs.find((p) => p.id === activeId) || programs[0];
+
+  const handleRowClick = (id: string) => {
+    setActiveId(id);
+    setMobileOpenId((prev) => (prev === id ? null : id));
+  };
 
   return (
     <section
@@ -372,21 +378,25 @@ export function ProgramsLineup() {
         {/* Left Column: Lineup Rows - Sleek, balanced sizing with zero scale/shrink */}
         <div className="lg:col-span-7 flex flex-col space-y-2.5 sm:space-y-3">
           {programs.map((program) => {
-            const isActive = program.id === activeId;
+            const isMobileOpen = mobileOpenId === program.id;
+            const isDesktopActive = activeId === program.id;
+
             return (
               <div key={program.id} className="flex flex-col">
                 {/* Lineup row button - Clean font scale, smooth translation and opacity */}
                 <motion.div
                   onMouseEnter={() => setActiveId(program.id)}
-                  onClick={() => setActiveId(program.id)}
+                  onClick={() => handleRowClick(program.id)}
                   animate={{
-                    x: isActive ? 6 : 0,
-                    opacity: isActive ? 1 : 0.65,
+                    x: isMobileOpen ? 4 : isDesktopActive ? 6 : 0,
+                    opacity: isMobileOpen ? 1 : isDesktopActive ? 1 : 0.7,
                   }}
                   transition={{ duration: 0.22, ease: "easeOut" }}
                   className={`group relative p-4 sm:p-5 rounded-2xl border transition-colors duration-300 cursor-pointer ${
-                    isActive
+                    isMobileOpen
                       ? "bg-fest-surface border-fest-accent shadow-[0_8px_30px_rgba(255,61,0,0.18)]"
+                      : isDesktopActive
+                      ? "lg:bg-fest-surface lg:border-fest-accent lg:shadow-[0_8px_30px_rgba(255,61,0,0.18)] bg-fest-dark/50 border-fest-border hover:border-fest-warm/30 hover:opacity-90"
                       : "bg-fest-dark/50 border-fest-border hover:border-fest-warm/30 hover:opacity-90"
                   }`}
                 >
@@ -407,8 +417,10 @@ export function ProgramsLineup() {
                       </span>
                       <div
                         className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-                          isActive
+                          isMobileOpen
                             ? "bg-fest-accent text-fest-black rotate-45"
+                            : isDesktopActive
+                            ? "lg:bg-fest-accent lg:text-fest-black lg:rotate-45 bg-white/5 text-fest-muted group-hover:text-fest-warm"
                             : "bg-white/5 text-fest-muted group-hover:text-fest-warm"
                         }`}
                       >
@@ -423,15 +435,32 @@ export function ProgramsLineup() {
                   </p>
                 </motion.div>
 
-                {/* Mobile Inline Expansion (Visible only on < lg screens) */}
+                {/* Mobile Inline Expansion (Visible ONLY on < lg screens) - Toggle with outro exit animation */}
                 <div className="lg:hidden">
-                  <AnimatePresence>
-                    {isActive && (
+                  <AnimatePresence initial={false}>
+                    {isMobileOpen && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
+                        initial={{ opacity: 0, height: 0, y: -6 }}
+                        animate={{ 
+                          opacity: 1, 
+                          height: "auto", 
+                          y: 0,
+                          transition: {
+                            height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                            opacity: { duration: 0.22, delay: 0.04 },
+                            y: { duration: 0.25, ease: "easeOut" }
+                          }
+                        }}
+                        exit={{ 
+                          opacity: 0, 
+                          height: 0, 
+                          y: -6,
+                          transition: {
+                            height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                            opacity: { duration: 0.16 },
+                            y: { duration: 0.16, ease: "easeIn" }
+                          }
+                        }}
                         className="overflow-hidden mt-2.5 mb-2 rounded-2xl border border-fest-accent/40 bg-fest-surface p-4 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.8)]"
                       >
                         <ProgramDetailsCard program={program} />
