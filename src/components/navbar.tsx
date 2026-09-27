@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 
@@ -66,8 +67,15 @@ export function Navbar() {
           href="#"
           className="group flex items-center space-x-2 sm:space-x-3 text-fest-warm"
         >
-          <div className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-fest-accent/20 border border-fest-accent/40 shrink-0">
-            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-fest-accent animate-pulse" />
+          <div className="relative flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 shrink-0 transition-transform duration-300 group-hover:scale-110">
+            <Image
+              src="/logo.png"
+              alt="ASTRA Logo"
+              width={28}
+              height={28}
+              className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] group-hover:drop-shadow-[0_0_12px_rgba(255,61,0,0.8)] transition-all"
+              priority
+            />
           </div>
           <span className="font-display font-extrabold text-sm sm:text-lg tracking-[0.2em] sm:tracking-[0.22em] text-fest-warm group-hover:text-fest-accent transition-colors">
             ASTRA
@@ -137,6 +145,15 @@ export function Navbar() {
             className="pointer-events-auto fixed inset-x-3 top-16 sm:top-20 rounded-3xl bg-black/90 backdrop-blur-2xl border border-white/[0.14] shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.2)] p-6 z-50 md:hidden max-h-[85vh] overflow-y-auto"
           >
             <div className="flex flex-col space-y-4 text-xs font-mono uppercase tracking-widest text-fest-warm/90">
+              <div className="flex items-center gap-3 pb-3 border-b border-white/[0.12]">
+                <div className="w-8 h-8 rounded-full bg-fest-accent/15 border border-fest-accent/30 flex items-center justify-center p-1 shrink-0">
+                  <Image src="/logo.png" alt="ASTRA Logo" width={28} height={28} className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <div className="font-display font-black text-sm tracking-widest text-fest-warm">ASTRA 2027</div>
+                  <div className="text-[9px] text-fest-muted normal-case">Don Bosco College, Mampetta</div>
+                </div>
+              </div>
               <a
                 href="#hero"
                 onClick={() => setMobileMenuOpen(false)}

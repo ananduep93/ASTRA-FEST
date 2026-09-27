@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export function Footer() {
   return (
     <footer id="info" className="relative border-t border-fest-border bg-fest-black py-10 sm:py-14 px-4 sm:px-8 lg:px-14 text-fest-muted text-xs font-mono scroll-mt-24">
@@ -6,7 +8,15 @@ export function Footer() {
         {/* Left: Festival Brand & Host */}
         <div className="space-y-2 flex flex-col items-center md:items-start">
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <span className="w-2 h-2 rounded-full bg-fest-accent" />
+            <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center shrink-0">
+              <Image
+                src="/logo.png"
+                alt="ASTRA Official Logo"
+                width={24}
+                height={24}
+                className="w-full h-full object-contain filter drop-shadow-[0_0_6px_rgba(255,61,0,0.6)]"
+              />
+            </div>
             <span className="font-display font-black text-base sm:text-lg tracking-widest text-fest-warm">
               ASTRA &apos;27
             </span>

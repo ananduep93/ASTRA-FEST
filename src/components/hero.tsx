@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 
@@ -64,15 +65,28 @@ export function Hero() {
             </svg>
           </div>
 
-          {/* Festival Eyebrow Badge */}
+          {/* Festival Eyebrow Badge & Official Logo Emblem */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="relative z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-fest-accent/30 bg-fest-accent/10 text-[9px] font-mono tracking-[0.22em] text-fest-accent uppercase font-bold mb-1"
+            className="relative z-10 flex flex-col items-center mb-1"
           >
-            <Sparkles className="w-2.5 h-2.5 text-fest-accent" />
-            <span>WHERE YOUTH MEETS MOMENTUM</span>
+            <div className="relative w-12 h-12 flex items-center justify-center mb-2">
+              <div className="absolute inset-0 bg-fest-accent/25 rounded-full blur-md animate-pulse" />
+              <Image
+                src="/logo.png"
+                alt="ASTRA Official Logo"
+                width={48}
+                height={48}
+                className="relative z-10 w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(255,61,0,0.7)]"
+                priority
+              />
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-fest-accent/30 bg-fest-accent/10 text-[9px] font-mono tracking-[0.22em] text-fest-accent uppercase font-bold">
+              <Sparkles className="w-2.5 h-2.5 text-fest-accent" />
+              <span>WHERE YOUTH MEETS MOMENTUM</span>
+            </div>
           </motion.div>
 
           {/* Giant Mobile ASTRA Typography */}
@@ -176,15 +190,28 @@ export function Hero() {
         {/* Centerpiece: Monumental Interactive ASTRA Poster Typography */}
         <div className="relative z-10 my-auto py-8 flex flex-col items-center justify-center text-center w-full">
           
-          {/* Subtle festival edition eyebrow */}
+          {/* Subtle festival edition eyebrow & Official Logo Emblem */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-fest-border bg-fest-dark/80 text-[11px] font-mono tracking-[0.25em] uppercase text-fest-muted mb-5"
+            className="flex flex-col items-center mb-5"
           >
-            <Sparkles className="w-3 sm:h-3 text-fest-accent shrink-0" />
-            <span>WHERE YOUTH MEETS MOMENTUM</span>
+            <div className="relative w-16 h-16 lg:w-20 lg:h-20 mb-3 flex items-center justify-center">
+              <div className="absolute inset-0 bg-fest-accent/20 rounded-full blur-xl animate-pulse" />
+              <Image
+                src="/logo.png"
+                alt="ASTRA Official Logo Emblem"
+                width={80}
+                height={80}
+                className="relative z-10 w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(255,61,0,0.65)] hover:scale-105 transition-transform duration-300"
+                priority
+              />
+            </div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-fest-border bg-fest-dark/80 text-[11px] font-mono tracking-[0.25em] uppercase text-fest-muted">
+              <Sparkles className="w-3 sm:h-3 text-fest-accent shrink-0" />
+              <span>WHERE YOUTH MEETS MOMENTUM</span>
+            </div>
           </motion.div>
 
           {/* The Giant ASTRA Typographic Monolith with Spring Hover Physics */}
