@@ -5,10 +5,11 @@
 @tailwind utilities;
 
 :root {
-  --background: #080A0E;
-  --foreground: #F4F6FB;
-  --accent: #FF5500;
+  --background: #0A0A0A;
+  --foreground: #F5F0E8;
+  --accent: #FF4D00;
   --secondary: #FFA040;
+  --border: rgba(255, 77, 0, 0.25);
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-display: 'Bebas Neue', 'Syne', 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;

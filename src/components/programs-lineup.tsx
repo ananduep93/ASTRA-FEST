@@ -447,17 +447,50 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
         {/* Clean Static Dark Background (Single Unified Theme, Zero Distractions) */}
         <div className="absolute inset-0 pointer-events-none -z-10 bg-[#080A0E]" />
 
-        {/* Top Arena Counter & Category Tracker */}
-        <div className="relative z-20 flex items-center justify-between w-full max-w-[340px] sm:max-w-md px-1 font-mono text-[11px]">
-          <div className="flex items-center gap-1.5 text-fest-accent">
-            <span className="w-2 h-2 rounded-full bg-fest-accent animate-ping" />
-            <span className="font-black tracking-widest uppercase">
-              ARENA {String(activeInt + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+        {/* Top Arena Counter & Tathva-Style 4 Event Pillars */}
+        <div className="relative z-20 flex flex-col gap-2 w-full max-w-[340px] sm:max-w-md px-1 font-mono text-[11px]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-fest-accent">
+              <span className="w-2 h-2 rounded-full bg-fest-accent animate-ping" />
+              <span className="font-black tracking-widest uppercase">
+                ARENA {String(activeInt + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+              </span>
+            </div>
+            <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-zinc-400 uppercase tracking-wider text-[10px] font-semibold">
+              {activeProg.category}
             </span>
           </div>
-          <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-fest-muted uppercase tracking-wider text-[10px] font-semibold">
-            {activeProg.category}
-          </span>
+
+          {/* Tathva-Style 4 Pillar Shortcuts */}
+          <div className="grid grid-cols-4 gap-1.5 pt-0.5">
+            {[
+              { num: "01", name: "STAGE", idx: 1 },
+              { num: "02", name: "TECH", idx: 4 },
+              { num: "03", name: "MEDIA", idx: 2 },
+              { num: "04", name: "MGMT", idx: 0 },
+            ].map((p) => {
+              const isPillarActive =
+                (p.name === "STAGE" && activeProg.category === "Stage & Runway") ||
+                (p.name === "TECH" && activeProg.category === "Tech & Gaming") ||
+                (p.name === "MEDIA" && activeProg.category === "Media & Arts") ||
+                (p.name === "MGMT" && activeProg.category === "Management");
+
+              return (
+                <button
+                  key={p.num}
+                  onClick={() => goTo(p.idx)}
+                  className={`py-1 px-1 rounded-lg border text-center transition-all ${
+                    isPillarActive
+                      ? "border-fest-accent bg-fest-accent/15 text-fest-accent font-black shadow-sm"
+                      : "border-white/10 bg-white/[0.02] text-zinc-400 hover:border-white/25 hover:text-white"
+                  }`}
+                >
+                  <span className="block text-[8px] opacity-60 font-semibold">{p.num}</span>
+                  <span className="block text-[10px] tracking-wider uppercase font-bold">{p.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* ========================================================= */}
