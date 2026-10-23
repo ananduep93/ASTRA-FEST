@@ -1,493 +1,521 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Calendar, MapPin, Tag, AlertCircle } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { Tag, Trophy, Calendar, MapPin, AlertCircle, Sparkles } from "lucide-react";
 
-interface Program {
+export interface Program {
   id: string;
   number: string;
   name: string;
+  subTitle: string;
   tagline: string;
+  category: "Stage & Runway" | "Media & Arts" | "Tech & Gaming" | "Management";
   fee: string;
+  prize: string;
   date: string;
   time: string;
   venue: string;
   requirements: string;
   badge: string;
-  artType: "dance" | "music" | "photography" | "coding";
 }
 
-const programs: Program[] = [
+export const allPrograms: Program[] = [
   {
-    id: "dance",
+    id: "scavenger-hunt",
     number: "01",
-    name: "DANCE",
-    tagline: "Synchronized collegiate choreography battle & street freestyle",
-    fee: "₹800 Per Team (₹300 Solo)",
-    date: "Day 01 • Mainstage Evening",
-    time: "05:00 PM – 09:00 PM",
-    venue: "Main Open Amphitheatre, Don Bosco College",
-    requirements: "6 to 12 crew members. 8+2 mins time limit. Soundtracks submitted 1h prior.",
-    badge: "TEAM & SOLO",
-    artType: "dance",
+    name: "Scavenger Hunt",
+    subTitle: "CAMPUS QUEST & MYSTERY",
+    tagline: "Decode cryptic campus riddles, uncover physical clues, and race against time across the college grounds.",
+    category: "Management",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Morning Slot",
+    venue: "Main Campus Grounds",
+    requirements: "Teams of 3 to 4. Physical navigation + riddle solving.",
+    badge: "CAMPUS HUNT",
   },
   {
-    id: "music",
+    id: "corporate-walk",
     number: "02",
-    name: "MUSIC",
-    tagline: "Battle of collegiate bands, acoustic sets & vocal showdown",
-    fee: "₹1,000 Per Band (₹250 Solo)",
-    date: "Day 02 • Sunset Jam",
-    time: "04:30 PM – 08:30 PM",
-    venue: "Auditorium Main Arena, Don Bosco College",
-    requirements: "Drum kit provided. 15 mins total stage time. Original tracks & covers allowed.",
-    badge: "LIVE STAGE",
-    artType: "music",
+    name: "Corporate Walk",
+    subTitle: "EXECUTIVE GRACE & RUNWAY",
+    tagline: "Showcase boardroom poise, corporate styling, executive articulation, and high-fashion business runway walk.",
+    category: "Stage & Runway",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Afternoon Spotlight",
+    venue: "Auditorium Main Stage",
+    requirements: "Formal corporate attire. Introduction & ramp walk.",
+    badge: "RUNWAY BATTLE",
   },
   {
     id: "photography",
     number: "03",
-    name: "PHOTOGRAPHY",
-    tagline: "Spot theme photojournalism & visual documentary story",
-    fee: "₹250 Per Entrant",
-    date: "Day 01 & 02 • Festival Grounds",
-    time: "10:00 AM – 04:00 PM",
-    venue: "Campus Grounds & Mampetta Surroundings",
-    requirements: "DSLR / Mirrorless required. Original RAW files mandatory. No generative AI.",
+    name: "Photography",
+    subTitle: "SPOT DOCUMENTARY & STORY",
+    tagline: "Spot theme photojournalism capturing raw emotion, motion, candid festival momentum, and visual storytelling.",
+    category: "Media & Arts",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Full Day Shoot",
+    venue: "Don Bosco Campus & Mampetta",
+    requirements: "DSLR / Mirrorless required. Original RAW files mandatory.",
     badge: "SPOT CONTEST",
-    artType: "photography",
   },
   {
-    id: "coding",
+    id: "rj-hunt",
     number: "04",
-    name: "CODING",
-    tagline: "High-intensity algorithmic sprint, debugging & speed hackathon",
-    fee: "₹400 Per Duo (₹250 Solo)",
-    date: "Day 02 • Morning Sprint",
-    time: "10:30 AM – 02:30 PM",
-    venue: "Central Computing Labs (Block B), Don Bosco",
-    requirements: "Languages: Python, C++, Java, Rust. Competitive scoring on automated judge.",
-    badge: "TECH SPRINT",
-    artType: "coding",
+    name: "RJ Hunt",
+    subTitle: "VOICE OF THE CONCLAVE",
+    tagline: "Live radio jockeying showdown testing voice modulation, spontaneity, quick wit, and crowd engagement.",
+    category: "Media & Arts",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Mid-Day Jam",
+    venue: "Acoustic Courtyard",
+    requirements: "Individual participant. 3+1 mins live on-air simulation.",
+    badge: "MIC BATTLE",
+  },
+  {
+    id: "esports",
+    number: "05",
+    name: "E-Sports",
+    subTitle: "BGMI & E-FOOTBALL ARENA",
+    tagline: "Competitive collegiate gaming battleground featuring intense squad drops in BGMI and 1v1 E-Football duels.",
+    category: "Tech & Gaming",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Continuous Tournament",
+    venue: "Gaming Hub, Block B",
+    requirements: "Own mobile devices required. Official game clients.",
+    badge: "ESPORTS ARENA",
+  },
+  {
+    id: "fashion-show-group",
+    number: "06",
+    name: "Fashion Show (Group)",
+    subTitle: "THEMED RUNWAY SPECTACLE",
+    tagline: "A grand ensemble of haute couture, themed aesthetics, synchronized choreography, and statement fashion.",
+    category: "Stage & Runway",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Evening Prime Stage",
+    venue: "Main Open Amphitheatre",
+    requirements: "8 to 14 models per crew. 10 mins stage time with theme track.",
+    badge: "FLAGSHIP RUNWAY",
+  },
+  {
+    id: "theme-dance",
+    number: "07",
+    name: "Theme Dance",
+    subTitle: "CHOREO CLASH & NARRATIVE",
+    tagline: "High-octane collegiate dance crews executing synchronized choreography rooted in a powerful visual theme.",
+    category: "Stage & Runway",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Evening Mainstage",
+    venue: "Main Open Amphitheatre",
+    requirements: "6 to 12 dancers. 8+2 mins time limit. Original concepts.",
+    badge: "STAGE SHOWDOWN",
+  },
+  {
+    id: "face-painting",
+    number: "08",
+    name: "Face Painting",
+    subTitle: "LIVING CANVAS ARTISTRY",
+    tagline: "Transform human faces into vivid storytelling canvases with brushwork, gradients, and thematic symbolism.",
+    category: "Media & Arts",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Morning Session",
+    venue: "Fine Arts Studio",
+    requirements: "Pair of 2 (Artist + Model). Non-toxic skin colors only.",
+    badge: "ARTISTRY BATTLE",
+  },
+  {
+    id: "fashion-show-single",
+    number: "09",
+    name: "Fashion Show (Single)",
+    subTitle: "SOLO COUTURE RUNWAY",
+    tagline: "Individual style, stage charisma, presence, and avant-garde couture under the solo amphitheatre spotlight.",
+    category: "Stage & Runway",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Late Afternoon",
+    venue: "Main Amphitheatre Ramp",
+    requirements: "Solo entrant. Ramp walk + judges Q&A round.",
+    badge: "SOLO RUNWAY",
+  },
+  {
+    id: "best-manager",
+    number: "10",
+    name: "Best Manager",
+    subTitle: "STRESS, STRATEGY & CRISIS",
+    tagline: "The ultimate leadership decathlon testing crisis management, boardroom defense, negotiation, and grit.",
+    category: "Management",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Multi-Round Event",
+    venue: "Management Seminar Hall",
+    requirements: "Individual event. Multiple eliminator rounds.",
+    badge: "MANAGEMENT ELITE",
+  },
+  {
+    id: "logo-design",
+    number: "11",
+    name: "Logo Design",
+    subTitle: "BRAND IDENTITY SPRINT",
+    tagline: "Craft distinct, memorable visual marks and brand emblems adhering to vector balance and conceptual depth.",
+    category: "Media & Arts",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Morning Sprint",
+    venue: "Digital Design Lab",
+    requirements: "Solo participation. Digital vector submissions on spot prompt.",
+    badge: "DESIGN SPRINT",
+  },
+  {
+    id: "coding-competition",
+    number: "12",
+    name: "Coding Competition",
+    subTitle: "ALGO SPEED SPRINT & BUG DUEL",
+    tagline: "High-intensity algorithmic problem solving, rapid debugging, and competitive data structure challenges.",
+    category: "Tech & Gaming",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Morning Tech Sprint",
+    venue: "Central Computing Lab B2",
+    requirements: "Solo or Duo. Languages: Python, C++, Java. Auto judge.",
+    badge: "CODE BATTLE",
+  },
+  {
+    id: "business-quiz",
+    number: "13",
+    name: "Business Quiz",
+    subTitle: "CORPORATE TRIVIA & ACUMEN",
+    tagline: "A cerebral battle of corporate history, brand logos, market acquisitions, finance, and global tycoons.",
+    category: "Management",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Mid-Day Buzzer Round",
+    venue: "Audio-Visual Hall",
+    requirements: "Teams of 2. Written prelims followed by live buzzer stage.",
+    badge: "QUIZ ARENA",
+  },
+  {
+    id: "reel-making",
+    number: "14",
+    name: "Reel Making",
+    subTitle: "SPOT VIRAL SHORT-FORM",
+    tagline: "Direct, shoot, and edit high-impact 60-second festival reels showcasing viral transitions and narrative beats.",
+    category: "Media & Arts",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Spot Shoot & Edit",
+    venue: "Campus Wide",
+    requirements: "Original footage recorded on festival day. 9:16 aspect ratio.",
+    badge: "VIRAL REEL",
+  },
+  {
+    id: "mini-militia",
+    number: "15",
+    name: "Mini Militia",
+    subTitle: "TACTICAL DOODLE COMBAT",
+    tagline: "Fast-paced LAN tactical combat duel with flying boots, plasma rifles, and intense squad firefights.",
+    category: "Tech & Gaming",
+    fee: "Registration Coming Soon",
+    prize: "Revealing Soon",
+    date: "One Day Mega Fest",
+    time: "Afternoon Bracket",
+    venue: "LAN Gaming Arena",
+    requirements: "Custom room squad battles. Standard unhacked versions.",
+    badge: "LAN DUEL",
   },
 ];
 
-// Custom Vector Artwork Renderers with dynamic festival animations
-function ProgramArtwork({ type }: { type: Program["artType"] }) {
-  if (type === "dance") {
-    return (
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6">
-        <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
-          <circle
-            cx="200"
-            cy="120"
-            r="85"
-            stroke="#FF3D00"
-            strokeWidth="1.5"
-            strokeDasharray="6 4"
-            fill="none"
-            className="animate-spin"
-            style={{ animationDuration: "25s" }}
-          />
-          <circle cx="200" cy="120" r="50" stroke="#F5F2EB" strokeWidth="1" fill="none" opacity="0.3" />
-          <motion.path
-            d="M 40 120 Q 120 40, 200 120 T 360 120"
-            stroke="#FF3D00"
-            strokeWidth="2.5"
-            fill="none"
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <path d="M 40 120 Q 120 200, 200 120 T 360 120" stroke="#F5F2EB" strokeWidth="1.5" opacity="0.8" fill="none" />
-          <path d="M 100 120 Q 160 80, 200 120 T 300 120" stroke="#FF3D00" strokeWidth="1" opacity="0.5" fill="none" />
-          <text
-            x="200"
-            y="125"
-            textAnchor="middle"
-            fill="#FFFFFF"
-            fontSize="20"
-            fontFamily="monospace"
-            fontWeight="bold"
-            letterSpacing="5"
-          >
-            RHYTHM // BATTLE
-          </text>
-        </svg>
-      </div>
-    );
-  }
-
-  if (type === "music") {
-    return (
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6">
-        <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
-          {[20, 50, 80, 110, 140, 170, 200, 230, 260, 290, 320, 350, 380].map((x, i) => {
-            const h = 40 + ((i * 37) % 110);
-            return (
-              <motion.line
-                key={i}
-                x1={x}
-                y1={120 - h / 2}
-                x2={x}
-                y2={120 + h / 2}
-                stroke={i % 3 === 0 ? "#FF3D00" : "#F5F2EB"}
-                strokeWidth="4"
-                strokeLinecap="round"
-                opacity={i % 3 === 0 ? 1 : 0.4}
-                animate={{
-                  y1: [120 - h / 2, 120 - (h * 0.35) / 2, 120 - (h * 1.15) / 2, 120 - h / 2],
-                  y2: [120 + h / 2, 120 + (h * 0.35) / 2, 120 + (h * 1.15) / 2, 120 + h / 2],
-                }}
-                transition={{
-                  duration: 0.8 + (i % 4) * 0.2,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut",
-                  delay: (i * 0.06),
-                }}
-              />
-            );
-          })}
-          <motion.circle
-            cx="200"
-            cy="120"
-            r="30"
-            fill="#060607"
-            stroke="#FF3D00"
-            strokeWidth="2"
-            animate={{ scale: [1, 1.08, 1] }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <circle cx="200" cy="120" r="8" fill="#F5F2EB" />
-          <text x="200" y="215" textAnchor="middle" fill="#FF3D00" fontSize="12" fontFamily="monospace" letterSpacing="4">
-            AMPLIFIED FREQ • 128 BPM
-          </text>
-        </svg>
-      </div>
-    );
-  }
-
-  if (type === "photography") {
-    return (
-      <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6">
-        <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
-          <rect x="70" y="30" width="260" height="180" rx="8" stroke="#F5F2EB" strokeWidth="1.5" opacity="0.3" fill="none" />
-          <circle cx="200" cy="120" r="65" stroke="#FF3D00" strokeWidth="2" fill="none" />
-          <circle
-            cx="200"
-            cy="120"
-            r="35"
-            stroke="#F5F2EB"
-            strokeWidth="1"
-            strokeDasharray="4 4"
-            fill="none"
-            className="animate-spin"
-            style={{ animationDuration: "16s" }}
-          />
-          <line x1="180" y1="120" x2="220" y2="120" stroke="#FF3D00" strokeWidth="2" />
-          <line x1="200" y1="100" x2="200" y2="140" stroke="#FF3D00" strokeWidth="2" />
-          <text x="85" y="55" fill="#FF3D00" fontSize="11" fontFamily="monospace" letterSpacing="2">
-            RAW • ISO 400 • F/1.8
-          </text>
-          <text x="200" y="225" textAnchor="middle" fill="#F5F2EB" fontSize="11" fontFamily="monospace" opacity="0.7">
-            DOCUMENTARY FOCUS
-          </text>
-        </svg>
-      </div>
-    );
-  }
-
-  // Coding
-  return (
-    <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-black/60 rounded-2xl border border-fest-border p-4 sm:p-6 font-mono">
-      <svg viewBox="0 0 400 240" className="w-full h-full max-h-48 sm:max-h-56">
-        <text x="30" y="45" fill="#FF3D00" fontSize="13" fontFamily="monospace" fontWeight="bold">
-          fn main() {"{"}
-        </text>
-        <text x="60" y="75" fill="#F5F2EB" fontSize="12" fontFamily="monospace" opacity="0.8">
-          let mut arena = Astra::init(2027);
-        </text>
-        <text x="60" y="105" fill="#F5F2EB" fontSize="12" fontFamily="monospace" opacity="0.8">
-          arena.deploy_challenge("ALGO_SPRINT");
-        </text>
-        <text x="60" y="135" fill="#FF3D00" fontSize="12" fontFamily="monospace">
-          loop {"{"} duel.solve(time.now())? {"}"}
-        </text>
-        <text x="30" y="165" fill="#FF3D00" fontSize="13" fontFamily="monospace" fontWeight="bold">
-          {"}"}
-        </text>
-        <rect x="250" y="130" width="8" height="15" fill="#FF3D00" className="animate-pulse" />
-        <text x="200" y="215" textAnchor="middle" fill="#F5F2EB" fontSize="10" opacity="0.6" letterSpacing="2">
-          1200 SECONDS REMAINING
-        </text>
-      </svg>
-    </div>
-  );
+interface ProgramsLineupProps {
+  onOpenRegister?: (program: Program) => void;
+  targetIndex?: number | null;
 }
 
-// Typing Text Effect Helper - Rock-solid layout with zero container collapse or shrinking
-function TypewriterText({ text, speed = 12 }: { text: string; speed?: number }) {
-  const [displayedLength, setDisplayedLength] = useState(0);
+export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [floatIndex, setFloatIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const isDraggingRef = useRef(false);
+  const targetIndexRef = useRef(0);
 
+  const total = allPrograms.length;
+
+  // Jump to specific arena if requested from external prop
   useEffect(() => {
-    setDisplayedLength(0);
-    let index = 0;
-    const interval = setInterval(() => {
-      index++;
-      setDisplayedLength(index);
-      if (index >= text.length) {
-        clearInterval(interval);
+    if (typeof targetIndex === "number" && targetIndex >= 0 && targetIndex < allPrograms.length) {
+      const clamped = Math.min(targetIndex, total - 1);
+      targetIndexRef.current = clamped;
+      setFloatIndex(clamped);
+
+      if (sectionRef.current) {
+        const top = sectionRef.current.offsetTop;
+        const scrollable = sectionRef.current.offsetHeight - window.innerHeight;
+        const targetScroll = top + (clamped / (total - 1 || 1)) * scrollable;
+        window.scrollTo({ top: targetScroll, behavior: "smooth" });
       }
-    }, speed);
+    }
+  }, [targetIndex, total]);
 
-    return () => clearInterval(interval);
-  }, [text, speed]);
+  // Scroll listener that drives the circular motion smoothly
+  useEffect(() => {
+    const handleScroll = () => {
+      const section = sectionRef.current;
+      if (!section) return;
 
-  const visibleText = text.slice(0, displayedLength);
-  const hiddenText = text.slice(displayedLength);
+      const rect = section.getBoundingClientRect();
+      const scrollableHeight = section.offsetHeight - window.innerHeight;
 
-  return (
-    <span>
-      <span>{visibleText}</span>
-      {displayedLength < text.length && (
-        <span className="inline-block w-1.5 h-3 bg-fest-accent mx-0.5 animate-pulse align-middle" />
-      )}
-      <span className="opacity-0 select-none pointer-events-none" aria-hidden="true">
-        {hiddenText}
-      </span>
-    </span>
-  );
-}
+      if (scrollableHeight <= 0) return;
 
-// Program Detail Card - Constant rock-solid size, strictly NO shrinking on hover
-function ProgramDetailsCard({ program }: { program: Program }) {
-  return (
-    <div className="flex flex-col space-y-4">
-      {/* Top Artwork Frame */}
-      <div className="h-36 sm:h-44 w-full shrink-0">
-        <ProgramArtwork type={program.artType} />
-      </div>
+      // Smoother mapping of scroll to continuous index
+      const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
+      const continuousIndex = progress * (total - 1);
 
-      {/* Program Name & Category */}
-      <div className="border-b border-fest-border pb-3">
-        <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-fest-accent mb-1">
-          <span>ARENA SPECIFICATION // {program.number}</span>
-          <span className="px-2 py-0.5 rounded bg-fest-accent/15 text-fest-accent text-[9px] sm:text-[10px] font-bold">
-            {program.badge}
-          </span>
-        </div>
-        <h4 className="font-display font-black text-xl sm:text-2xl text-fest-warm">
-          {program.name}
-        </h4>
-      </div>
+      setFloatIndex(continuousIndex);
+      targetIndexRef.current = Math.round(continuousIndex);
+    };
 
-      {/* Information Details with smooth typewriter animation & zero layout shift */}
-      <div className="space-y-2.5 font-mono text-[11px] sm:text-xs text-fest-muted">
-        <div className="flex items-start gap-2.5 sm:gap-3">
-          <Tag className="w-3.5 h-3.5 text-fest-accent shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <span className="text-fest-warm font-semibold">ENTRY FEE: </span>
-            <span className="text-fest-warm">
-              <TypewriterText text={program.fee} speed={12} />
-            </span>
-          </div>
-        </div>
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [total]);
 
-        <div className="flex items-start gap-2.5 sm:gap-3">
-          <Calendar className="w-3.5 h-3.5 text-fest-accent shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <span className="text-fest-warm font-semibold">SCHEDULE: </span>
-            <span className="text-fest-warm">
-              <TypewriterText text={`${program.date} (${program.time})`} speed={10} />
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-2.5 sm:gap-3">
-          <MapPin className="w-3.5 h-3.5 text-fest-accent shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <span className="text-fest-warm font-semibold">VENUE: </span>
-            <span className="text-fest-warm">
-              <TypewriterText text={program.venue} speed={9} />
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-start gap-2.5 sm:gap-3">
-          <AlertCircle className="w-3.5 h-3.5 text-fest-accent shrink-0 mt-0.5" />
-          <div className="flex-1 leading-relaxed">
-            <span className="text-fest-warm font-semibold">RULES: </span>
-            <span className="text-fest-muted">
-              <TypewriterText text={program.requirements} speed={7} />
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Button: REGISTER */}
-      <div className="pt-1.5">
-        <button
-          type="button"
-          className="w-full py-3 sm:py-3.5 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs sm:text-sm tracking-widest uppercase hover:bg-fest-warm hover:shadow-[0_0_30px_rgba(245,242,235,0.4)] transition-colors duration-200 flex items-center justify-center gap-2 group cursor-pointer"
-        >
-          <span>REGISTER FOR {program.name}</span>
-          <ArrowUpRight className="w-4 h-4 stroke-[3] group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-export function ProgramsLineup() {
-  const [activeId, setActiveId] = useState<string>("dance");
-  const [mobileOpenId, setMobileOpenId] = useState<string | null>(null);
-  const activeProgram = programs.find((p) => p.id === activeId) || programs[0];
-
-  const handleRowClick = (id: string) => {
-    setActiveId(id);
-    setMobileOpenId((prev) => (prev === id ? null : id));
+  // Touch Swipe for mobile devices
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+    isDraggingRef.current = true;
   };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingRef.current || touchStartX === null) return;
+    const diffX = touchStartX - e.touches[0].clientX;
+
+    // Smoother, slower drag sensitivity
+    if (Math.abs(diffX) > 6) {
+      const step = diffX * 0.0028;
+      setFloatIndex((prev) => Math.max(0, Math.min(total - 1, prev + step)));
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const diffX = touchStartX - e.changedTouches[0].clientX;
+
+    if (Math.abs(diffX) > 30) {
+      const dir = diffX > 0 ? 1 : -1;
+      const nextIndex = Math.max(0, Math.min(total - 1, targetIndexRef.current + dir));
+      scrollToArena(nextIndex);
+    } else {
+      scrollToArena(Math.round(floatIndex));
+    }
+
+    setTouchStartX(null);
+    isDraggingRef.current = false;
+  };
+
+  // Smooth scroll to program index
+  const scrollToArena = useCallback(
+    (index: number) => {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      const clamped = Math.max(0, Math.min(total - 1, index));
+      const top = section.offsetTop;
+      const scrollable = section.offsetHeight - window.innerHeight;
+      const targetScroll = top + (clamped / (total - 1 || 1)) * scrollable;
+
+      window.scrollTo({ top: targetScroll, behavior: "smooth" });
+      setFloatIndex(clamped);
+      targetIndexRef.current = clamped;
+    },
+    [total]
+  );
+
+  const activeInt = Math.round(floatIndex);
 
   return (
     <section
+      ref={sectionRef}
       id="programs"
-      className="relative py-14 sm:py-20 md:py-24 px-4 sm:px-8 lg:px-14 max-w-7xl mx-auto border-t border-fest-border bg-fest-black text-fest-warm scroll-mt-28 lg:scroll-mt-32"
+      className="relative bg-fest-black"
+      style={{ height: `${Math.max(260, total * 35)}vh` }} // Height scales with count for leisurely scroll
     >
-      {/* Section Header - Scaled down to clean, refined proportions */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
-        <div>
-          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-mono tracking-widest text-fest-accent uppercase mb-1.5 sm:mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-fest-accent animate-ping" />
-            <span>01 // OFFICIAL FESTIVAL LINEUP</span>
-          </div>
-          <h2 className="font-display font-black text-2xl sm:text-3xl md:text-4xl tracking-tight text-fest-warm">
-            COMPETITIVE ARENAS
-          </h2>
+      {/* 
+        STICKY VIEWPORT:
+        Stays constant and fixed while user scrolls through the section!
+      */}
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-center items-center px-3 sm:px-6">
+        
+        {/* ========================================================= */}
+        {/* CONSTANT FIXED BACKGROUND (ROCK SOLID, NEVER MOVES)        */}
+        {/* ========================================================= */}
+        <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+          {/* Subtle center cyber cyan & violet atmospheric glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[550px] h-[340px] sm:h-[550px] bg-fest-accent/[0.04] rounded-full blur-[110px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[450px] h-[280px] sm:h-[450px] bg-fest-secondary/[0.03] rounded-full blur-[100px]" />
+
+          {/* SVG Circular Orbital Track indicating the circular wheel */}
+          <svg
+            viewBox="0 0 1000 600"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] sm:w-[1300px] h-full opacity-35"
+          >
+            <path
+              d="M 60 490 Q 500 240 940 490"
+              stroke="#00F0FF"
+              strokeWidth="1.2"
+              strokeDasharray="6 8"
+              fill="none"
+              className="animate-pulse"
+              style={{ animationDuration: "5s" }}
+            />
+            <path
+              d="M 140 510 Q 500 300 860 510"
+              stroke="#8B5CF6"
+              strokeWidth="0.8"
+              strokeDasharray="4 6"
+              fill="none"
+              opacity="0.3"
+            />
+            <circle cx="500" cy="240" r="3.5" fill="#00F0FF" className="animate-ping" />
+            <circle cx="500" cy="240" r="2" fill="#FFFFFF" />
+          </svg>
         </div>
 
-        <p className="max-w-md text-xs sm:text-[13px] text-fest-muted font-light leading-relaxed">
-          Hover or select each discipline to explore its arena specifications, venue timings, fee,
-          and participation criteria.
-        </p>
-      </div>
+        {/* ========================================================= */}
+        {/* CIRCULAR MOTION CAROUSEL STAGE                            */}
+        {/* ========================================================= */}
+        <div
+          className="relative z-10 w-full flex items-center justify-center overflow-hidden touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div className="relative w-full max-w-[340px] sm:max-w-md h-[400px] sm:h-[430px] flex items-center justify-center">
+            {allPrograms.map((prog, i) => {
+              const delta = i - floatIndex;
 
-      {/* Main Grid Layout - Exact Proportions of Image 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-        
-        {/* Left Column: Lineup Rows - Sleek, balanced sizing with zero scale/shrink */}
-        <div className="lg:col-span-7 flex flex-col space-y-2.5 sm:space-y-3">
-          {programs.map((program) => {
-            const isMobileOpen = mobileOpenId === program.id;
-            const isDesktopActive = activeId === program.id;
+              // Slower, Silkier Parametric Circular Motion
+              // Angle rad smoothed for a leisurely, floating carousel arc
+              const angleRad = delta * 0.62;
+              const translateX = Math.sin(angleRad) * 325;
+              const translateY = (1 - Math.cos(angleRad)) * 48; // Gentle curve dip
+              const rotateZ = delta * 7.5; // Smooth wheel tilt
+              const rotateY = delta * -20; // 3D perspective
+              const scale = Math.max(0.72, 1 - Math.abs(delta) * 0.16);
+              const opacity = Math.max(0, 1 - Math.abs(delta) * 0.7);
+              const isCenter = Math.abs(delta) < 0.45;
+              const zIndex = Math.round(20 - Math.abs(delta) * 3);
 
-            return (
-              <div key={program.id} className="flex flex-col">
-                {/* Lineup row button - Clean font scale, smooth translation and opacity */}
-                <motion.div
-                  onMouseEnter={() => setActiveId(program.id)}
-                  onClick={() => handleRowClick(program.id)}
-                  animate={{
-                    x: isMobileOpen ? 4 : isDesktopActive ? 6 : 0,
-                    opacity: isMobileOpen ? 1 : isDesktopActive ? 1 : 0.7,
+              return (
+                <div
+                  key={prog.id}
+                  style={{
+                    transform: `translate3d(${translateX}px, ${translateY}px, 0px) rotateZ(${rotateZ}deg) rotateY(${rotateY}deg) scale(${scale})`,
+                    opacity,
+                    zIndex,
+                    pointerEvents: isCenter ? "auto" : "none",
                   }}
-                  transition={{ duration: 0.22, ease: "easeOut" }}
-                  className={`group relative p-4 sm:p-5 rounded-2xl border transition-colors duration-300 cursor-pointer ${
-                    isMobileOpen
-                      ? "bg-fest-surface border-fest-accent shadow-[0_8px_30px_rgba(255,61,0,0.18)]"
-                      : isDesktopActive
-                      ? "lg:bg-fest-surface lg:border-fest-accent lg:shadow-[0_8px_30px_rgba(255,61,0,0.18)] bg-fest-dark/50 border-fest-border hover:border-fest-warm/30 hover:opacity-90"
-                      : "bg-fest-dark/50 border-fest-border hover:border-fest-warm/30 hover:opacity-90"
-                  }`}
+                  className="absolute inset-0 flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-[#0D0E16] border border-white/[0.12] shadow-[0_20px_50px_rgba(0,0,0,0.95)] select-none will-change-transform transition-colors"
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-baseline space-x-2.5 sm:space-x-4">
-                      <span className="font-mono text-xs sm:text-sm tracking-widest text-fest-accent font-bold">
-                        {program.number}
-                      </span>
-                      <span className="text-white/20 select-none">—</span>
-                      <h3 className="font-display font-black text-xl sm:text-2xl md:text-3xl tracking-tight text-fest-warm group-hover:text-fest-accent transition-colors">
-                        {program.name}
-                      </h3>
+                  {/* Card Header */}
+                  <div>
+                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 mb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[11px] font-black text-fest-accent px-2 py-0.5 rounded bg-fest-accent/10 border border-fest-accent/25">
+                          #{prog.number}
+                        </span>
+                        <span className="font-mono text-[9px] text-fest-muted tracking-widest uppercase">
+                          {prog.badge}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] font-mono text-fest-secondary font-bold">
+                        <Trophy className="w-3.5 h-3.5 shrink-0" />
+                        <span>{prog.prize}</span>
+                      </div>
                     </div>
 
-                    <div className="flex items-center space-x-2 sm:space-x-2.5">
-                      <span className="hidden xs:inline-block px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono tracking-widest uppercase border border-white/10 text-fest-muted">
-                        {program.badge}
-                      </span>
-                      <div
-                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-                          isMobileOpen
-                            ? "bg-fest-accent text-fest-black rotate-45"
-                            : isDesktopActive
-                            ? "lg:bg-fest-accent lg:text-fest-black lg:rotate-45 bg-white/5 text-fest-muted group-hover:text-fest-warm"
-                            : "bg-white/5 text-fest-muted group-hover:text-fest-warm"
-                        }`}
-                      >
-                        <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <h3 className="font-display font-black text-2xl sm:text-3xl text-fest-warm tracking-tight">
+                      {prog.name}
+                    </h3>
+                    <p className="font-mono text-[10px] text-fest-accent font-semibold tracking-wider uppercase mb-1">
+                      {prog.subTitle}
+                    </p>
+                    <p className="text-[11px] sm:text-xs text-fest-muted font-light leading-snug line-clamp-2">
+                      {prog.tagline}
+                    </p>
+                  </div>
+
+                  {/* 2x2 Specs Grid */}
+                  <div className="grid grid-cols-2 gap-1.5 my-2 font-mono text-[11px] bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.06]">
+                    <div className="flex items-start gap-1.5">
+                      <Tag className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
+                      <div className="leading-snug truncate">
+                        <span className="text-fest-muted text-[9px] block">ENTRY STATUS</span>
+                        <span className="text-fest-warm font-semibold truncate text-[10px] sm:text-[11px]">
+                          {prog.fee}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-1.5">
+                      <Calendar className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
+                      <div className="leading-snug truncate">
+                        <span className="text-fest-muted text-[9px] block">SCHEDULE</span>
+                        <span className="text-fest-warm font-semibold truncate text-[10px] sm:text-[11px]">
+                          {prog.date}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="col-span-2 flex items-start gap-1.5 pt-1 border-t border-white/[0.04]">
+                      <MapPin className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
+                      <div className="leading-snug truncate">
+                        <span className="text-fest-muted text-[9px] block">VENUE</span>
+                        <span className="text-fest-warm font-medium truncate text-[10px] sm:text-[11px]">
+                          {prog.venue}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Condensed Tagline */}
-                  <p className="mt-1.5 text-xs sm:text-[13px] text-fest-muted font-light pl-5 sm:pl-7">
-                    {program.tagline}
-                  </p>
-                </motion.div>
+                  {/* Requirements summary */}
+                  <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-mono text-fest-muted px-0.5 truncate">
+                    <AlertCircle className="w-3 h-3 text-fest-accent shrink-0" />
+                    <span className="truncate">{prog.requirements}</span>
+                  </div>
 
-                {/* Mobile Inline Expansion (Visible ONLY on < lg screens) - Toggle with outro exit animation */}
-                <div className="lg:hidden">
-                  <AnimatePresence initial={false}>
-                    {isMobileOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0, y: -6 }}
-                        animate={{ 
-                          opacity: 1, 
-                          height: "auto", 
-                          y: 0,
-                          transition: {
-                            height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
-                            opacity: { duration: 0.22, delay: 0.04 },
-                            y: { duration: 0.25, ease: "easeOut" }
-                          }
-                        }}
-                        exit={{ 
-                          opacity: 0, 
-                          height: 0, 
-                          y: -6,
-                          transition: {
-                            height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
-                            opacity: { duration: 0.16 },
-                            y: { duration: 0.16, ease: "easeIn" }
-                          }
-                        }}
-                        className="overflow-hidden mt-2.5 mb-2 rounded-2xl border border-fest-accent/40 bg-fest-surface p-4 sm:p-5 shadow-[0_12px_40px_rgba(0,0,0,0.8)]"
-                      >
-                        <ProgramDetailsCard program={program} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {/* Card Bottom CTA: Register button */}
+                  <button
+                    onClick={() => onOpenRegister?.(prog)}
+                    className="w-full mt-2.5 py-3 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-white transition-all duration-300 active:scale-95 shadow-[0_4px_18px_rgba(0,240,255,0.3)]"
+                  >
+                    <span>REGISTER FOR {prog.name.toUpperCase()}</span>
+                    <Sparkles className="w-3.5 h-3.5 text-fest-black" />
+                  </button>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Right Column: Desktop Sticky Pop-up Artwork & Detailed Dossier (Visible on >= lg screens) */}
-        {/* Sleek padding and proportion - Smooth fade transition with strictly ZERO scale or shrinking */}
-        <div className="hidden lg:block lg:col-span-5 sticky top-24 xl:top-28">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeProgram.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="rounded-3xl border border-fest-border bg-fest-surface p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]"
-            >
-              <ProgramDetailsCard program={activeProgram} />
-            </motion.div>
-          </AnimatePresence>
+              );
+            })}
+          </div>
         </div>
 
       </div>

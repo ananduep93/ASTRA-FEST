@@ -3,197 +3,132 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X, ArrowUpRight, Sparkles } from "lucide-react";
 
-export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+interface NavbarProps {
+  onOpenRegister?: () => void;
+}
+
+export function Navbar({ onOpenRegister }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const sentinel = document.querySelector("#scroll-sentinel");
-    if (!sentinel) {
-      let ticking = false;
-      const handleScroll = () => {
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            setScrolled(window.scrollY > 20);
-            ticking = false;
-          });
-          ticking = true;
-        }
-      };
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setScrolled(!entry.isIntersecting);
-      },
-      { threshold: 0 }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
   }, [mobileMenuOpen]);
 
-  return (
-    <header className="fixed top-5 sm:top-6 left-0 right-0 z-50 flex justify-center px-3.5 sm:px-6 pointer-events-none pt-safe">
-      {/* iOS Liquid Glass Floating Dynamic Island Bar */}
-      <div
-        className={`pointer-events-auto w-full max-w-5xl flex items-center justify-between px-3.5 sm:px-7 py-2 sm:py-3 rounded-full transition-all duration-300 relative ${
-          scrolled
-            ? "bg-black/75 backdrop-blur-2xl border border-white/[0.14] shadow-[0_12px_40px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.22)]"
-            : "bg-black/50 backdrop-blur-xl border border-white/[0.10] shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.18)]"
-        }`}
-      >
-        {/* Subtle iOS liquid inner rim refraction highlight */}
-        <div className="absolute inset-0 rounded-full pointer-events-none ring-1 ring-white/10 ring-inset" />
+  const navItems = [
+    { label: "00 // ORIGIN", href: "#hero" },
+    { label: "01 // 15 EVENTS", href: "#programs" },
+    { label: "02 // CREW", href: "#coordinators" },
+    { label: "03 // VENUE & INFO", href: "#info" },
+  ];
 
-        {/* Brand identity */}
-        <a
-          href="#"
-          className="group flex items-center space-x-2 sm:space-x-3 text-fest-warm"
-        >
-          <div className="relative flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 shrink-0 transition-transform duration-300 group-hover:scale-110">
+  return (
+    <header className="fixed top-0 left-0 right-0 z-40 bg-[#060609]/92 backdrop-blur-xl border-b border-white/[0.08] transition-all">
+      <div className="max-w-7xl mx-auto h-14 sm:h-16 px-4 sm:px-6 lg:px-12 flex items-center justify-between">
+        {/* Brand */}
+        <a href="#hero" className="flex items-center gap-2.5 group">
+          <div className="relative w-7 h-7 shrink-0 flex items-center justify-center">
+            <div className="absolute inset-0 bg-fest-accent/25 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
             <Image
               src="/logo.png"
               alt="ASTRA Logo"
-              width={28}
-              height={28}
-              className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] group-hover:drop-shadow-[0_0_12px_rgba(255,61,0,0.8)] transition-all"
+              width={26}
+              height={26}
+              className="relative w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]"
               priority
             />
           </div>
-          <span className="font-display font-extrabold text-sm sm:text-lg tracking-[0.2em] sm:tracking-[0.22em] text-fest-warm group-hover:text-fest-accent transition-colors">
-            ASTRA
-          </span>
-          <span className="text-[9px] sm:text-[10px] font-mono tracking-widest text-fest-muted uppercase border-l border-white/10 pl-2">
-            2027
-          </span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="font-display font-black text-base sm:text-lg tracking-[0.16em] text-fest-warm group-hover:text-fest-accent transition-colors">
+              ASTRA
+            </span>
+            <span className="text-[10px] font-mono tracking-widest text-fest-accent font-semibold">
+              ʼ27
+            </span>
+          </div>
         </a>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-4 lg:space-x-7 text-[11px] lg:text-xs font-mono tracking-widest uppercase text-fest-muted">
-          <a
-            href="#hero"
-            className="hover:text-fest-warm transition-colors py-1"
-          >
-            00 / ORIGIN
-          </a>
-          <a
-            href="#programs"
-            className="hover:text-fest-accent transition-colors py-1 flex items-center gap-1.5 font-semibold text-fest-warm"
-          >
-            <span>01 / LINEUP</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-fest-accent" />
-          </a>
-          <a
-            href="#info"
-            className="hover:text-fest-warm transition-colors py-1"
-          >
-            02 / VENUE
-          </a>
+        {/* Desktop Nav Items */}
+        <nav className="hidden md:flex items-center gap-6 font-mono text-xs tracking-wider uppercase text-fest-muted">
+          {navItems.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className="hover:text-fest-warm transition-colors py-1"
+            >
+              {item.label}
+            </a>
+          ))}
         </nav>
 
-        {/* Right Status Capsule & Action */}
-        <div className="hidden sm:flex items-center space-x-3">
-          <div className="hidden lg:flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[10px] font-mono text-fest-warm/90">
+        {/* Right CTA Area */}
+        <div className="flex items-center gap-2.5">
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-fest-accent/10 border border-fest-accent/20 text-[10px] font-mono text-fest-accent">
             <span className="w-1.5 h-1.5 rounded-full bg-fest-accent animate-ping" />
-            <span className="tracking-wider">KOZHIKODE • KERALA</span>
+            <span className="tracking-widest uppercase">DON BOSCO MAMPETTA</span>
           </div>
 
-          <a
-            href="#programs"
-            className="group flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-fest-accent text-fest-black text-[11px] font-display font-bold tracking-wider uppercase hover:bg-fest-warm transition-all duration-300"
+          <button
+            onClick={onOpenRegister}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-fest-accent text-fest-black text-xs font-display font-black tracking-wider uppercase hover:bg-white transition-all duration-300 shadow-[0_2px_14px_rgba(0,240,255,0.35)] active:scale-95"
           >
-            <span>LINEUP</span>
-            <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </a>
-        </div>
+            <span>REGISTER</span>
+            <ArrowUpRight className="w-3.5 h-3.5 stroke-[3]" />
+          </button>
 
-        {/* Mobile menu trigger */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden flex items-center justify-center w-8 h-8 rounded-full border border-white/10 text-fest-warm hover:bg-white/5"
-          aria-label="Toggle navigation"
-        >
-          {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-        </button>
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden w-9 h-9 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-fest-warm hover:bg-white/10 active:scale-95 transition-all"
+            aria-label="Toggle navigation"
+          >
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile iOS Liquid Glass Drawer */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.96 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="pointer-events-auto fixed inset-x-3 top-16 sm:top-20 rounded-3xl bg-black/90 backdrop-blur-2xl border border-white/[0.14] shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.2)] p-6 z-50 md:hidden max-h-[85vh] overflow-y-auto"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="md:hidden border-b border-white/10 bg-[#0A0B12]/98 backdrop-blur-2xl px-5 py-5 overflow-hidden"
           >
-            <div className="flex flex-col space-y-4 text-xs font-mono uppercase tracking-widest text-fest-warm/90">
-              <div className="flex items-center gap-3 pb-3 border-b border-white/[0.12]">
-                <div className="w-8 h-8 rounded-full bg-fest-accent/15 border border-fest-accent/30 flex items-center justify-center p-1 shrink-0">
-                  <Image src="/logo.png" alt="ASTRA Logo" width={28} height={28} className="w-full h-full object-contain" />
-                </div>
-                <div>
-                  <div className="font-display font-black text-sm tracking-widest text-fest-warm">ASTRA 2027</div>
-                  <div className="text-[9px] text-fest-muted normal-case">Don Bosco College, Mampetta</div>
-                </div>
-              </div>
-              <a
-                href="#hero"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-3 border-b border-white/[0.08] flex items-center justify-between hover:text-fest-accent"
-              >
-                <span>00 // ORIGIN</span>
-                <span className="text-[10px] text-fest-muted">HOME</span>
-              </a>
-              <a
-                href="#programs"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-3 border-b border-white/[0.08] flex items-center justify-between text-fest-accent font-semibold"
-              >
-                <span>01 // FESTIVAL LINEUP</span>
-                <span className="text-[10px] bg-fest-accent/20 text-fest-accent px-2 py-0.5 rounded-full">4 ARENAS</span>
-              </a>
-              <a
-                href="#info"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-3 border-b border-white/[0.08] flex items-center justify-between hover:text-fest-accent"
-              >
-                <span>02 // VENUE & INFO</span>
-                <span className="text-[10px] text-fest-muted">MUKKAM</span>
-              </a>
-              
-              <div className="pt-2 text-[10px] font-mono text-fest-muted flex flex-col space-y-1.5">
-                <span className="text-fest-warm font-semibold tracking-wide">DON BOSCO COLLEGE MAMPETTA</span>
-                <span>MUKKAM, KOZHIKODE, KERALA — 673602</span>
-                <span className="text-fest-accent font-bold pt-1">INTER-COLLEGE FEST • 2027</span>
+            <div className="flex flex-col space-y-3 font-mono text-xs uppercase tracking-widest text-fest-warm">
+              {navItems.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2.5 border-b border-white/[0.06] flex items-center justify-between text-fest-muted hover:text-fest-accent"
+                >
+                  <span>{item.label}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-fest-muted" />
+                </a>
+              ))}
+
+              <div className="pt-2 flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenRegister?.();
+                  }}
+                  className="w-full py-3 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-fest-black" />
+                  <span>REGISTER FOR 15 EVENTS</span>
+                </button>
               </div>
 
-              <div className="pt-2">
-                <a
-                  href="#programs"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-3 rounded-full bg-fest-accent text-fest-black text-center font-display font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5"
-                >
-                  <span>VIEW LINEUP</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
-                </a>
+              <div className="pt-2 text-[10px] text-fest-muted/70 text-center font-mono">
+                Coordinator: Anandu EP (8075480258) · Don Bosco College Mampetta
               </div>
             </div>
           </motion.div>

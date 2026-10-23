@@ -16,15 +16,20 @@ export function CosmicCanvas() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || width < 768;
+
     const onResize = () => {
       if (!canvas) return;
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     };
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize, { passive: true });
 
-    // Optimized particle count for guaranteed 60fps on low-end devices
-    const PARTICLE_COUNT = Math.min(45, Math.floor(width / 30));
+    // Slower, smoother particle count
+    const PARTICLE_COUNT = isMobile
+      ? Math.min(22, Math.floor(width / 35))
+      : Math.min(40, Math.floor(width / 28));
+
     const particles: {
       x: number;
       y: number;
@@ -40,16 +45,18 @@ export function CosmicCanvas() {
     const centerY = () => height / 2;
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const isAccent = Math.random() > 0.75;
+      const rand = Math.random();
+      const color = rand > 0.65 ? "#00F0FF" : rand > 0.4 ? "#8B5CF6" : "#FFFFFF";
       particles.push({
         x: 0,
         y: 0,
         angle: Math.random() * Math.PI * 2,
         dist: Math.random() * Math.min(width, height) * 0.45 + 50,
-        speed: (Math.random() * 0.003 + 0.001) * (Math.random() > 0.5 ? 1 : -1),
-        size: Math.random() * 1.8 + 0.8,
-        color: isAccent ? "#FF3D00" : "#F5F2EB",
-        alpha: Math.random() * 0.5 + 0.2,
+        // Slower leisurely speed for velvety smooth feel
+        speed: (Math.random() * 0.0012 + 0.0004) * (Math.random() > 0.5 ? 1 : -1),
+        size: Math.random() * 1.5 + 0.6,
+        color,
+        alpha: Math.random() * 0.4 + 0.15,
       });
     }
 
@@ -62,67 +69,79 @@ export function CosmicCanvas() {
       targetMouseX = e.clientX;
       targetMouseY = e.clientY;
     };
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        targetMouseX = e.touches[0].clientX;
+        targetMouseY = e.touches[0].clientY;
+      }
+    };
     window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
 
     let t = 0;
 
     const loop = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Light damping on mouse tracking
-      mouseX += (targetMouseX - mouseX) * 0.04;
-      mouseY += (targetMouseY - mouseY) * 0.04;
+      // Very smooth, gentle damping for silky feeling
+      const lerp = isMobile ? 0.02 : 0.03;
+      mouseX += (targetMouseX - mouseX) * lerp;
+      mouseY += (targetMouseY - mouseY) * lerp;
 
-      const cx = centerX() + (mouseX - centerX()) * 0.08;
-      const cy = centerY() + (mouseY - centerY()) * 0.08;
+      const offsetFactor = isMobile ? 0.04 : 0.06;
+      const cx = centerX() + (mouseX - centerX()) * offsetFactor;
+      const cy = centerY() + (mouseY - centerY()) * offsetFactor;
 
-      t += 0.015;
+      t += 0.006; // Slower time evolution
 
-      // Draw subtle orbital rings around central typography
+      // Orbital rings: Cyan and Violet
       const ringRadius = Math.min(width, height) * 0.28;
-      
-      // Ring 1 (accent vermillion)
+
       ctx.beginPath();
-      ctx.ellipse(cx, cy, ringRadius, ringRadius * 0.45, t * 0.2, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(255, 61, 0, 0.12)";
+      ctx.ellipse(cx, cy, ringRadius, ringRadius * 0.42, t * 0.1, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(0, 240, 255, 0.08)";
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Ring 2 (warm white)
       ctx.beginPath();
-      ctx.ellipse(cx, cy, ringRadius * 1.35, ringRadius * 0.55, -t * 0.15 + 0.8, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(245, 242, 235, 0.06)";
-      ctx.lineWidth = 0.75;
+      ctx.ellipse(cx, cy, ringRadius * 1.45, ringRadius * 0.5, -t * 0.07 + 0.8, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(139, 92, 246, 0.06)";
+      ctx.lineWidth = 0.8;
       ctx.stroke();
 
-      // Particles rotation
+      // Particles
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.angle += p.speed;
 
         p.x = cx + Math.cos(p.angle) * p.dist;
-        p.y = cy + Math.sin(p.angle) * (p.dist * 0.55);
+        p.y = cy + Math.sin(p.angle) * (p.dist * 0.5);
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color === "#FF3D00" 
-          ? `rgba(255, 61, 0, ${p.alpha})`
-          : `rgba(245, 242, 235, ${p.alpha})`;
+        ctx.fillStyle =
+          p.color === "#00F0FF"
+            ? `rgba(0, 240, 255, ${p.alpha})`
+            : p.color === "#8B5CF6"
+            ? `rgba(139, 92, 246, ${p.alpha})`
+            : `rgba(255, 255, 255, ${p.alpha})`;
         ctx.fill();
 
-        // Connect very close neighbors
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 6000) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = "rgba(245, 242, 235, 0.04)";
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
+        // Connect nearby particles gently on desktop
+        if (!isMobile) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dx = p.x - p2.x;
+            const dy = p.y - p2.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < 5500) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = "rgba(0, 240, 255, 0.03)";
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
           }
         }
       }
@@ -130,11 +149,12 @@ export function CosmicCanvas() {
       animId = requestAnimationFrame(loop);
     };
 
-    loop();
+    animId = requestAnimationFrame(loop);
 
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchmove", onTouchMove);
       cancelAnimationFrame(animId);
     };
   }, []);
@@ -143,7 +163,7 @@ export function CosmicCanvas() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 h-full w-full opacity-70"
+      className="pointer-events-none fixed inset-0 z-0 h-full w-full opacity-65"
     />
   );
 }

@@ -10,14 +10,16 @@ const config: Config = {
     extend: {
       colors: {
         fest: {
-          black: "#060607",
-          dark: "#0C0C0E",
-          surface: "#121215",
-          border: "rgba(245, 242, 235, 0.08)",
-          warm: "#F5F2EB",
-          muted: "#9E9A90",
-          accent: "#FF3D00", // Electric Vermillion - The single bold festival accent
-          accentHover: "#FF5722",
+          black: "#060609",
+          dark: "#0B0C12",
+          surface: "#10121C",
+          card: "#131622",
+          border: "rgba(0, 240, 255, 0.15)",
+          warm: "#FFFFFF",
+          muted: "#94A3B8",
+          accent: "#00F0FF", // Electric Cyber Cyan - High-end, futuristic on black
+          accentHover: "#38BDF8",
+          secondary: "#8B5CF6", // Neon Violet
         },
       },
       fontFamily: {
@@ -34,7 +36,7 @@ const config: Config = {
       },
       boxShadow: {
         "liquid-glass": "0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)",
-        "accent-glow": "0 0 35px rgba(255, 61, 0, 0.4)",
+        "accent-glow": "0 0 35px rgba(0, 240, 255, 0.45)",
       },
     },
   },
