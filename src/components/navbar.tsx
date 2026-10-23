@@ -53,7 +53,7 @@ export function Navbar({ onOpenRegister }: NavbarProps) {
               alt="ASTRA Logo"
               width={30}
               height={30}
-              className="relative w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(245,158,11,0.65)]"
+              className="relative w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(255,85,0,0.65)]"
               priority
             />
           </div>
@@ -89,7 +89,7 @@ export function Navbar({ onOpenRegister }: NavbarProps) {
 
           <button
             onClick={onOpenRegister}
-            className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-fest-accent to-fest-secondary hover:from-fest-accentLight hover:to-fest-accent text-fest-black text-xs font-display font-black tracking-wider uppercase transition-all duration-300 shadow-[0_2px_16px_rgba(245,158,11,0.35)] active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-fest-accent hover:bg-fest-accentHover text-fest-black text-xs font-display font-black tracking-wider uppercase transition-all duration-300 shadow-[0_2px_16px_rgba(255,85,0,0.35)] active:scale-95"
           >
             <span>REGISTER</span>
             <ArrowUpRight className="w-3.5 h-3.5 stroke-[3]" />
@@ -135,7 +135,7 @@ export function Navbar({ onOpenRegister }: NavbarProps) {
                     setMobileMenuOpen(false);
                     onOpenRegister?.();
                   }}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-fest-accent to-fest-secondary text-fest-black font-display font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
+                  className="w-full py-3.5 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(255,85,0,0.3)]"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-fest-black" />
                   <span>REGISTER FOR 15 EVENTS</span>

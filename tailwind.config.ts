@@ -10,24 +10,25 @@ const config: Config = {
     extend: {
       colors: {
         fest: {
-          black: "#08080C",
-          dark: "#0E0F16",
-          surface: "#141520",
-          card: "#171826",
-          border: "rgba(245, 158, 11, 0.2)",
-          warm: "#FFFFFF",
-          muted: "#94A3B8",
-          accent: "#F59E0B", // Royal Solar Gold
-          accentLight: "#FBBF24", // Radiant Amber
-          accentHover: "#D97706",
-          secondary: "#F97316", // Warm Solar Flare
-          gold: "#FDE047", // Sparkling Champagne
+          black: "#08080A",
+          dark: "#0E0F14",
+          surface: "#14151D",
+          card: "#181924",
+          border: "rgba(255, 85, 0, 0.22)",
+          warm: "#FFF9F2", // Warm White
+          muted: "#A0A0AA",
+          accent: "#FF5500", // Electric Orange
+          accentLight: "#FF7722",
+          accentHover: "#E64A00",
+          secondary: "#FFA040", // Warm Amber
+          orange: "#FF5500",
+          gold: "#FFB03A",
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
-        mono: ["var(--font-mono)", "monospace"],
+        sans: ["var(--font-sans)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Space Grotesk", "Plus Jakarta Sans", "sans-serif"],
+        mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
       letterSpacing: {
         tighter: "-0.05em",
@@ -38,8 +39,8 @@ const config: Config = {
       },
       boxShadow: {
         "liquid-glass": "0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)",
-        "accent-glow": "0 0 35px rgba(245, 158, 11, 0.35)",
-        "gold-halo": "0 0 45px rgba(245, 158, 11, 0.25), 0 0 15px rgba(249, 115, 22, 0.2)",
+        "accent-glow": "0 0 35px rgba(255, 85, 0, 0.4)",
+        "orange-halo": "0 0 50px rgba(255, 85, 0, 0.3), 0 0 15px rgba(255, 119, 34, 0.2)",
       },
     },
   },

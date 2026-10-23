@@ -5,6 +5,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { Navbar } from "@/components/navbar";
 import { CosmicCanvas } from "@/components/cosmic-canvas";
 import { Hero } from "@/components/hero";
+import { MarqueeTicker } from "@/components/marquee-ticker";
 import { ProgramsLineup, Program, allPrograms } from "@/components/programs-lineup";
 import { Coordinators } from "@/components/coordinators";
 import { Footer } from "@/components/footer";
@@ -44,6 +45,9 @@ export default function Home() {
         onOpenRegister={() => handleOpenRegister()}
         onSelectArena={handleSelectArena}
       />
+
+      {/* Electric Orange Festival Marquee Ticker */}
+      <MarqueeTicker />
 
       {/* 
         15 Programs Lineup with SILKY SMOOTH CIRCULAR MOTION scroll effect:

@@ -1,7 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Tag, Trophy, Calendar, MapPin, AlertCircle, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Trophy,
+  Calendar,
+  MapPin,
+  AlertCircle,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  ExternalLink,
+  MessageSquare,
+  ArrowRight,
+  Maximize2
+} from "lucide-react";
 
 export interface Program {
   id: string;
@@ -17,6 +32,7 @@ export interface Program {
   venue: string;
   requirements: string;
   badge: string;
+  image: string;
 }
 
 export const allPrograms: Program[] = [
@@ -34,6 +50,7 @@ export const allPrograms: Program[] = [
     venue: "Main Campus Grounds",
     requirements: "Teams of 3 to 4. Physical navigation + riddle solving.",
     badge: "CAMPUS HUNT",
+    image: "/images/cards/scavng.jpeg",
   },
   {
     id: "corporate-walk",
@@ -49,6 +66,7 @@ export const allPrograms: Program[] = [
     venue: "Auditorium Main Stage",
     requirements: "Formal corporate attire. Introduction & ramp walk.",
     badge: "RUNWAY BATTLE",
+    image: "/images/cards/coprtwalk.jpeg",
   },
   {
     id: "photography",
@@ -64,6 +82,7 @@ export const allPrograms: Program[] = [
     venue: "Don Bosco Campus & Mampetta",
     requirements: "DSLR / Mirrorless required. Original RAW files mandatory.",
     badge: "SPOT CONTEST",
+    image: "/images/cards/photography.jpeg",
   },
   {
     id: "rj-hunt",
@@ -79,6 +98,7 @@ export const allPrograms: Program[] = [
     venue: "Acoustic Courtyard",
     requirements: "Individual participant. 3+1 mins live on-air simulation.",
     badge: "MIC BATTLE",
+    image: "/images/cards/RJhunt.jpeg",
   },
   {
     id: "esports",
@@ -94,6 +114,7 @@ export const allPrograms: Program[] = [
     venue: "Gaming Hub, Block B",
     requirements: "Own mobile devices required. Official game clients.",
     badge: "ESPORTS ARENA",
+    image: "/images/cards/ESP.jpeg",
   },
   {
     id: "fashion-show-group",
@@ -109,6 +130,7 @@ export const allPrograms: Program[] = [
     venue: "Main Open Amphitheatre",
     requirements: "8 to 14 models per crew. 10 mins stage time with theme track.",
     badge: "FLAGSHIP RUNWAY",
+    image: "/images/cards/fashnshow.jpeg",
   },
   {
     id: "theme-dance",
@@ -124,6 +146,7 @@ export const allPrograms: Program[] = [
     venue: "Main Open Amphitheatre",
     requirements: "6 to 12 dancers. 8+2 mins time limit. Original concepts.",
     badge: "STAGE SHOWDOWN",
+    image: "/images/cards/THEMEDANCE.jpeg",
   },
   {
     id: "face-painting",
@@ -139,6 +162,7 @@ export const allPrograms: Program[] = [
     venue: "Fine Arts Studio",
     requirements: "Pair of 2 (Artist + Model). Non-toxic skin colors only.",
     badge: "ARTISTRY BATTLE",
+    image: "/images/cards/facepainting.jpeg",
   },
   {
     id: "fashion-show-single",
@@ -154,6 +178,7 @@ export const allPrograms: Program[] = [
     venue: "Main Amphitheatre Ramp",
     requirements: "Solo entrant. Ramp walk + judges Q&A round.",
     badge: "SOLO RUNWAY",
+    image: "/images/cards/fshnshow.jpeg",
   },
   {
     id: "best-manager",
@@ -169,6 +194,7 @@ export const allPrograms: Program[] = [
     venue: "Management Seminar Hall",
     requirements: "Individual event. Multiple eliminator rounds.",
     badge: "MANAGEMENT ELITE",
+    image: "/images/cards/bestmanager.jpeg",
   },
   {
     id: "logo-design",
@@ -184,6 +210,7 @@ export const allPrograms: Program[] = [
     venue: "Digital Design Lab",
     requirements: "Solo participation. Digital vector submissions on spot prompt.",
     badge: "DESIGN SPRINT",
+    image: "/images/cards/LOGODESIGN.jpeg",
   },
   {
     id: "coding-competition",
@@ -199,6 +226,7 @@ export const allPrograms: Program[] = [
     venue: "Central Computing Lab B2",
     requirements: "Solo or Duo. Languages: Python, C++, Java. Auto judge.",
     badge: "CODE BATTLE",
+    image: "/images/cards/codingcomp.jpeg",
   },
   {
     id: "business-quiz",
@@ -214,6 +242,7 @@ export const allPrograms: Program[] = [
     venue: "Audio-Visual Hall",
     requirements: "Teams of 2. Written prelims followed by live buzzer stage.",
     badge: "QUIZ ARENA",
+    image: "/images/cards/bussquiz.jpeg",
   },
   {
     id: "reel-making",
@@ -229,6 +258,7 @@ export const allPrograms: Program[] = [
     venue: "Campus Wide",
     requirements: "Original footage recorded on festival day. 9:16 aspect ratio.",
     badge: "VIRAL REEL",
+    image: "/images/cards/REELMAKING.jpeg",
   },
   {
     id: "mini-militia",
@@ -244,6 +274,7 @@ export const allPrograms: Program[] = [
     venue: "LAN Gaming Arena",
     requirements: "Custom room squad battles. Standard unhacked versions.",
     badge: "LAN DUEL",
+    image: "/images/cards/mini.jpeg",
   },
 ];
 
@@ -254,60 +285,35 @@ interface ProgramsLineupProps {
 
 export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [displayIndex, setDisplayIndex] = useState(0);
+  const cardElementsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeInt, setActiveInt] = useState(0);
+  const [inspectProgram, setInspectProgram] = useState<Program | null>(null);
 
-  // References for continuous 60fps/120fps animation loop
+  // References for ultra-responsive 120fps hardware loop
   const targetIndexRef = useRef(0);
   const currentIndexRef = useRef(0);
-
-  // Swipe detection references (lateral flick)
-  const touchStartXRef = useRef(0);
-  const touchStartYRef = useRef(0);
-  const touchStartTimeRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartIndexRef = useRef(0);
 
   const total = allPrograms.length;
+
+  // Preload all 15 poster images into memory on mount
+  useEffect(() => {
+    allPrograms.forEach((p) => {
+      const img = new window.Image();
+      img.src = p.image;
+    });
+  }, []);
 
   // Jump to specific arena if requested from external prop
   useEffect(() => {
     if (typeof targetIndex === "number" && targetIndex >= 0 && targetIndex < allPrograms.length) {
       goTo(targetIndex);
     }
-  }, [targetIndex, total]);
+  }, [targetIndex]);
 
-  // Unified, High-Performance Animation Engine:
-  // Reads window.scrollY directly inside requestAnimationFrame without event overhead.
-  // Perfectly symmetrical forward and backward movement with ZERO lag!
-  useEffect(() => {
-    let animId: number;
-
-    const renderLoop = () => {
-      const section = sectionRef.current;
-      if (section) {
-        const sectionTop = section.offsetTop;
-        const scrollable = section.offsetHeight - window.innerHeight;
-
-        if (scrollable > 0) {
-          const currentScroll = window.scrollY - sectionTop;
-          const rawProgress = Math.max(0, Math.min(1, currentScroll / scrollable));
-          targetIndexRef.current = rawProgress * (total - 1);
-        }
-      }
-
-      // Smooth exponential lerp damping (0.22 response rate = buttery 120Hz tracking)
-      const diff = targetIndexRef.current - currentIndexRef.current;
-      if (Math.abs(diff) > 0.0003) {
-        currentIndexRef.current += diff * 0.22;
-        setDisplayIndex(currentIndexRef.current);
-      }
-
-      animId = requestAnimationFrame(renderLoop);
-    };
-
-    animId = requestAnimationFrame(renderLoop);
-    return () => cancelAnimationFrame(animId);
-  }, [total]);
-
-  // Navigate to target index smoothly by scrolling the page
+  // Navigate smoothly to target card index
   const goTo = useCallback(
     (index: number) => {
       const clamped = Math.max(0, Math.min(total - 1, index));
@@ -325,65 +331,132 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
     [total]
   );
 
-  // Handle Touch Gesture on Mobile (Only triggers on distinct lateral swipe)
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartXRef.current = e.touches[0].clientX;
-    touchStartYRef.current = e.touches[0].clientY;
-    touchStartTimeRef.current = Date.now();
-  };
+  // =========================================================================
+  // ZERO-LATENCY DIRECT DOM ANIMATION ENGINE (120 FPS GUARANTEED)
+  // Bypasses React state overhead on every frame for buttery liquid physics!
+  // =========================================================================
+  useEffect(() => {
+    let animId: number;
+    let lastRoundedIndex = -1;
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const diffX = touchStartXRef.current - e.changedTouches[0].clientX;
-    const diffY = touchStartYRef.current - e.changedTouches[0].clientY;
-    const duration = Date.now() - touchStartTimeRef.current;
+    const renderLoop = () => {
+      // 1. Sync from window scroll if not dragging directly
+      if (!isDraggingRef.current && sectionRef.current) {
+        const section = sectionRef.current;
+        const sectionTop = section.offsetTop;
+        const scrollable = section.offsetHeight - window.innerHeight;
 
-    // Only process as swipe if movement is predominantly horizontal
-    if (Math.abs(diffX) > Math.abs(diffY) * 1.6 && Math.abs(diffX) > 35) {
-      const velocity = Math.abs(diffX) / Math.max(1, duration);
-      const currentInt = Math.round(targetIndexRef.current);
-
-      if (diffX > 0) {
-        // Swiped left -> advance forward
-        goTo(currentInt + 1);
-      } else {
-        // Swiped right -> advance backward
-        goTo(currentInt - 1);
+        if (scrollable > 0) {
+          const currentScroll = window.scrollY - sectionTop;
+          const rawProgress = Math.max(0, Math.min(1, currentScroll / scrollable));
+          targetIndexRef.current = rawProgress * (total - 1);
+        }
       }
-    }
+
+      // 2. High-precision exponential lerp damping (0.18 response rate)
+      const diff = targetIndexRef.current - currentIndexRef.current;
+      if (Math.abs(diff) > 0.0002) {
+        currentIndexRef.current += diff * 0.18;
+      } else {
+        currentIndexRef.current = targetIndexRef.current;
+      }
+
+      const cur = currentIndexRef.current;
+      const rounded = Math.max(0, Math.min(total - 1, Math.round(cur)));
+      if (rounded !== lastRoundedIndex) {
+        lastRoundedIndex = rounded;
+        setActiveInt(rounded);
+      }
+
+      // 3. Direct DOM GPU Transform Application to Cards (Bypasses React VDOM)
+      const radius = 320;
+      for (let i = 0; i < total; i++) {
+        const el = cardElementsRef.current[i];
+        if (!el) continue;
+
+        const delta = i - cur;
+
+        // Culling
+        if (Math.abs(delta) > 2.8) {
+          el.style.display = "none";
+          continue;
+        }
+
+        el.style.display = "flex";
+        const angleRad = delta * 0.54;
+        const translateX = Math.sin(angleRad) * radius;
+        const translateZ = (Math.cos(angleRad) - 1) * 260;
+        const translateY = Math.abs(delta) * 12;
+        const rotateY = -angleRad * 54;
+        const scale = Math.max(0.72, 1 - Math.abs(delta) * 0.13);
+        const opacity = Math.max(0, 1 - Math.abs(delta) * 0.42);
+        const zIndex = Math.round(30 - Math.abs(delta) * 8);
+
+        el.style.transform = `translate3d(${translateX.toFixed(2)}px, ${translateY.toFixed(2)}px, ${translateZ.toFixed(2)}px) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+        el.style.opacity = opacity.toFixed(3);
+        el.style.zIndex = String(zIndex);
+        el.style.pointerEvents = Math.abs(delta) < 1.1 ? "auto" : "none";
+      }
+
+      animId = requestAnimationFrame(renderLoop);
+    };
+
+    animId = requestAnimationFrame(renderLoop);
+    return () => cancelAnimationFrame(animId);
+  }, [total]);
+
+  // Direct Horizontal Touch Gesture Handler (Buttery Lateral Drag)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    isDraggingRef.current = true;
+    dragStartXRef.current = e.touches[0].clientX;
+    dragStartIndexRef.current = targetIndexRef.current;
   };
 
-  const activeInt = Math.max(0, Math.min(total - 1, Math.round(displayIndex)));
-  const activeProg = allPrograms[activeInt];
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDraggingRef.current) return;
+    const diffX = dragStartXRef.current - e.touches[0].clientX;
+    // Map horizontal pixel drag to card shift (150px per card swipe)
+    const cardShift = diffX / 160;
+    const newTarget = Math.max(0, Math.min(total - 1, dragStartIndexRef.current + cardShift));
+    targetIndexRef.current = newTarget;
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    // Snap cleanly to the nearest card on finger release
+    const nearest = Math.round(targetIndexRef.current);
+    goTo(nearest);
+  };
+
+  const activeProg = allPrograms[activeInt] || allPrograms[0];
 
   return (
     <section
       ref={sectionRef}
       id="programs"
       className="relative bg-fest-black"
-      style={{ height: `${Math.max(180, total * 18)}vh` }} // Comfortable scroll traversal distance
+      style={{ height: `${Math.max(180, total * 18)}vh` }}
     >
       {/* 
         STICKY VIEWPORT:
-        Stays constant and fixed while user scrolls through the section!
+        Stays constant and fixed while user scrolls through the 15 arenas!
       */}
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-between items-center pt-16 pb-3 px-3 sm:px-6">
         
-        {/* ========================================================= */}
-        {/* CONSTANT FIXED BACKGROUND (SOLAR GOLD & CELESTIAL AMBER)   */}
-        {/* ========================================================= */}
+        {/* Constant Ambient Glow Background */}
         <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-          {/* Subtle center solar gold & amber atmospheric glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[600px] h-[340px] sm:h-[600px] bg-fest-accent/[0.04] rounded-full blur-[130px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] bg-fest-secondary/[0.03] rounded-full blur-[110px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[620px] h-[340px] sm:h-[620px] bg-fest-accent/[0.04] rounded-full blur-[140px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[480px] h-[260px] sm:h-[480px] bg-fest-secondary/[0.03] rounded-full blur-[110px]" />
 
-          {/* SVG Circular Orbital Track indicating the 3D circular wheel */}
+          {/* SVG Orbital Horizon Track */}
           <svg
             viewBox="0 0 1000 600"
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] sm:w-[1300px] h-full opacity-35"
           >
             <path
               d="M 60 490 Q 500 240 940 490"
-              stroke="#F59E0B"
+              stroke="#FF5500"
               strokeWidth="1.2"
               strokeDasharray="6 8"
               fill="none"
@@ -392,13 +465,13 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
             />
             <path
               d="M 140 510 Q 500 300 860 510"
-              stroke="#F97316"
+              stroke="#FFA040"
               strokeWidth="0.8"
               strokeDasharray="4 6"
               fill="none"
               opacity="0.3"
             />
-            <circle cx="500" cy="240" r="3.5" fill="#F59E0B" className="animate-ping" />
+            <circle cx="500" cy="240" r="3.5" fill="#FF5500" className="animate-ping" />
             <circle cx="500" cy="240" r="2" fill="#FFFFFF" />
           </svg>
         </div>
@@ -417,133 +490,94 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
         </div>
 
         {/* ========================================================= */}
-        {/* TRUE 3D CYLINDRICAL ORBIT STAGE (PERSPECTIVE 1200px)       */}
+        {/* TRUE 3D CYLINDRICAL ORBIT STAGE (IMAGE POSTER SHOWCASE)    */}
         {/* ========================================================= */}
         <div
           className="relative z-10 w-full flex-1 flex items-center justify-center overflow-hidden touch-pan-y perspective-1000"
           onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="relative w-full max-w-[330px] sm:max-w-md h-[390px] sm:h-[430px] flex items-center justify-center preserve-3d">
+          <div className="relative w-full max-w-[300px] sm:max-w-[340px] h-[390px] sm:h-[440px] flex items-center justify-center preserve-3d">
             {allPrograms.map((prog, i) => {
-              const delta = i - displayIndex;
-
-              // Card Culling: completely skip calculation for cards beyond view
-              if (Math.abs(delta) > 2.6) {
-                return null;
-              }
-
-              // True 3D Cylindrical Orbit Math
-              const angleRad = delta * 0.52;
-              const radius = 330;
-              const translateX = Math.sin(angleRad) * radius;
-              // Push flanking cards backwards into 3D space
-              const translateZ = (Math.cos(angleRad) - 1) * 260;
-              const translateY = Math.abs(delta) * 14;
-              // Rotate cards inwards towards center in real 3D perspective
-              const rotateY = -angleRad * 56;
-              const scale = Math.max(0.74, 1 - Math.abs(delta) * 0.14);
-              const opacity = Math.max(0, 1 - Math.abs(delta) * 0.44);
-              const isCenter = Math.abs(delta) < 0.42;
-              const zIndex = Math.round(25 - Math.abs(delta) * 6);
+              const isCenter = i === activeInt;
 
               return (
                 <div
                   key={prog.id}
+                  ref={(el) => {
+                    cardElementsRef.current[i] = el;
+                  }}
                   onClick={() => {
-                    if (!isCenter) goTo(i);
+                    if (isCenter) {
+                      setInspectProgram(prog);
+                    } else {
+                      goTo(i);
+                    }
                   }}
-                  style={{
-                    transform: `translate3d(${translateX}px, ${translateY}px, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
-                    opacity,
-                    zIndex,
-                    pointerEvents: Math.abs(delta) < 1.2 ? "auto" : "none",
-                  }}
-                  className={`absolute inset-0 flex flex-col justify-between p-3.5 sm:p-5 rounded-2xl bg-[#0E0F16] select-none will-change-transform backface-hidden transition-colors ${
+                  className={`group absolute inset-0 rounded-2xl overflow-hidden cursor-pointer select-none will-change-transform backface-hidden transition-shadow duration-300 ${
                     isCenter
-                      ? "border border-fest-accent/50 shadow-[0_16px_50px_rgba(245,158,11,0.25)]"
-                      : "border border-white/[0.08] cursor-pointer hover:border-fest-accent/30"
+                      ? "ring-2 ring-fest-accent shadow-[0_20px_50px_rgba(255,85,0,0.35)]"
+                      : "ring-1 ring-white/10 hover:ring-fest-accent/40"
                   }`}
                 >
-                  {/* Card Top: Number, Badge, Prize */}
-                  <div>
-                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-2 sm:pb-2.5 sm:mb-2.5">
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <span className="font-mono text-[10px] sm:text-[11px] font-black text-fest-accent px-2 py-0.5 rounded bg-fest-accent/15 border border-fest-accent/30">
-                          #{prog.number}
-                        </span>
-                        <span className="font-mono text-[9px] text-fest-muted tracking-widest uppercase font-semibold">
-                          {prog.badge}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-[10px] sm:text-[11px] font-mono text-fest-accentLight font-bold">
-                        <Trophy className="w-3.5 h-3.5 text-fest-accent shrink-0" />
-                        <span>{prog.prize}</span>
-                      </div>
+                  {/* High-Resolution Event Poster Background Image */}
+                  <div className="absolute inset-0 bg-[#0E0F14]">
+                    <Image
+                      src={prog.image}
+                      alt={prog.name}
+                      fill
+                      priority={i < 4}
+                      sizes="(max-width: 640px) 300px, 340px"
+                      className="object-cover object-center w-full h-full transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {/* Artistic Vignette & Gradient Overlays */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/40" />
+                    <div className="absolute inset-0 bg-fest-accent/[0.04] mix-blend-overlay" />
+                  </div>
+
+                  {/* Card Top Glass Bar: Arena Number & Badge */}
+                  <div className="relative z-10 p-3 sm:p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono text-[10px] sm:text-[11px] font-black text-white px-2 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/15">
+                        #{prog.number}
+                      </span>
+                      <span className="font-mono text-[9px] text-white/90 tracking-widest uppercase font-bold px-2 py-0.5 rounded bg-black/40 backdrop-blur-md border border-white/10">
+                        {prog.badge}
+                      </span>
                     </div>
 
-                    {/* Program Title & Subhead (Space Grotesk / Modern Geometric Sans) */}
-                    <h3 className="font-display font-black text-xl sm:text-3xl text-fest-warm tracking-tight leading-tight">
-                      {prog.name}
-                    </h3>
-                    <p className="font-mono text-[10px] sm:text-[11px] text-fest-accent font-bold tracking-wider uppercase mb-1 mt-0.5">
+                    <div className="flex items-center gap-1 text-[10px] font-mono text-fest-accent font-bold px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-fest-accent/30">
+                      <Trophy className="w-3 h-3 text-fest-accent shrink-0" />
+                      <span>{prog.prize}</span>
+                    </div>
+                  </div>
+
+                  {/* Card Bottom Glass Strip: Title, Subhead, and Tap CTA */}
+                  <div className="relative z-10 mt-auto p-3.5 sm:p-4.5 bg-gradient-to-t from-black via-black/85 to-transparent backdrop-blur-[2px]">
+                    <div className="flex items-baseline justify-between gap-1 mb-0.5">
+                      <h3 className="font-display font-black text-lg sm:text-2xl text-fest-warm tracking-tight leading-tight group-hover:text-fest-accent transition-colors">
+                        {prog.name}
+                      </h3>
+                      <Maximize2 className="w-4 h-4 text-fest-accent shrink-0 opacity-80 group-hover:scale-110 transition-transform" />
+                    </div>
+
+                    <p className="font-mono text-[9px] sm:text-[10px] text-fest-accent tracking-wider uppercase font-semibold mb-2">
                       {prog.subTitle}
                     </p>
-                    <p className="text-[11px] sm:text-xs text-fest-muted font-normal leading-snug line-clamp-2">
-                      {prog.tagline}
-                    </p>
+
+                    {/* Quick Action Button on Poster */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setInspectProgram(prog);
+                      }}
+                      className="w-full py-2 px-3 rounded-xl bg-fest-accent hover:bg-fest-accentHover text-fest-black font-display font-black text-[11px] sm:text-xs tracking-wider uppercase flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-[0_2px_14px_rgba(255,85,0,0.4)]"
+                    >
+                      <span>VIEW EVENT DETAILS</span>
+                      <ArrowRight className="w-3 h-3 stroke-[3]" />
+                    </button>
                   </div>
-
-                  {/* 2x2 Specs Grid */}
-                  <div className="grid grid-cols-2 gap-1.5 my-1.5 sm:my-2 font-mono text-[10px] sm:text-[11px] bg-white/[0.02] p-2 sm:p-2.5 rounded-xl border border-white/[0.06]">
-                    <div className="flex items-start gap-1.5">
-                      <Tag className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
-                      <div className="leading-snug truncate">
-                        <span className="text-fest-muted text-[8px] sm:text-[9px] block">ENTRY STATUS</span>
-                        <span className="text-fest-warm font-semibold truncate text-[9px] sm:text-[10px]">
-                          {prog.fee}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-1.5">
-                      <Calendar className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
-                      <div className="leading-snug truncate">
-                        <span className="text-fest-muted text-[8px] sm:text-[9px] block">SCHEDULE</span>
-                        <span className="text-fest-warm font-semibold truncate text-[9px] sm:text-[10px]">
-                          {prog.date}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="col-span-2 flex items-start gap-1.5 pt-1 border-t border-white/[0.04]">
-                      <MapPin className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
-                      <div className="leading-snug truncate">
-                        <span className="text-fest-muted text-[8px] sm:text-[9px] block">VENUE</span>
-                        <span className="text-fest-warm font-medium truncate text-[9px] sm:text-[10px]">
-                          {prog.venue}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Requirements summary */}
-                  <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-mono text-fest-muted px-0.5 truncate">
-                    <AlertCircle className="w-3 h-3 text-fest-accent shrink-0" />
-                    <span className="truncate">{prog.requirements}</span>
-                  </div>
-
-                  {/* Card Bottom CTA: Register button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenRegister?.(prog);
-                    }}
-                    className="w-full mt-2 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-fest-accent to-fest-secondary hover:from-fest-accentLight hover:to-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-[0_4px_18px_rgba(245,158,11,0.35)]"
-                  >
-                    <span>REGISTER FOR {prog.name.toUpperCase()}</span>
-                    <Sparkles className="w-3.5 h-3.5 text-fest-black" />
-                  </button>
                 </div>
               );
             })}
@@ -561,7 +595,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
             <ChevronLeft className="w-4 h-4 text-fest-accent" />
           </button>
 
-          {/* 15 Interactive Golden Indicator Dots */}
+          {/* 15 Interactive Indicator Dots */}
           <div className="flex items-center gap-1 overflow-x-auto scrollbar-none py-1 px-1">
             {allPrograms.map((_, dotIdx) => {
               const isActive = dotIdx === activeInt;
@@ -572,7 +606,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                   aria-label={`Jump to program ${dotIdx + 1}`}
                   className={`transition-all duration-300 rounded-full ${
                     isActive
-                      ? "w-4 h-1.5 bg-fest-accent shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                      ? "w-4 h-1.5 bg-fest-accent shadow-[0_0_8px_rgba(255,85,0,0.8)]"
                       : "w-1.5 h-1.5 bg-white/20 hover:bg-white/40"
                   }`}
                 />
@@ -591,6 +625,133 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
         </div>
 
       </div>
+
+      {/* =================================================================== */}
+      {/* ANIMATED PROGRAM DETAILS POP VIEW (POPS ON IMAGE CLICK WITH TEXT ANIMS) */}
+      {/* =================================================================== */}
+      <AnimatePresence>
+        {inspectProgram && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.88, y: 25 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 26, stiffness: 340 }}
+              className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0D0E15] border border-fest-accent/40 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_35px_rgba(255,85,0,0.25)] p-4 sm:p-6 text-fest-warm select-none"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setInspectProgram(null)}
+                className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/70 border border-white/15 text-fest-warm hover:text-fest-accent hover:border-fest-accent/50 active:scale-90 transition-all"
+                aria-label="Close details"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Event Poster Header Preview */}
+              <div className="relative w-full h-48 sm:h-56 rounded-2xl overflow-hidden mb-4 border border-white/10">
+                <Image
+                  src={inspectProgram.image}
+                  alt={inspectProgram.name}
+                  fill
+                  className="object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0E15] via-transparent to-black/30" />
+                <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                  <span className="font-mono text-xs font-black text-white px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md border border-white/20">
+                    ARENA #{inspectProgram.number}
+                  </span>
+                  <span className="font-mono text-[10px] text-fest-accent font-bold px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md border border-fest-accent/30 uppercase">
+                    {inspectProgram.category}
+                  </span>
+                </div>
+              </div>
+
+              {/* Animated Text Content */}
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+              >
+                <div className="flex items-baseline justify-between gap-2 mb-1">
+                  <h2 className="font-display font-black text-2xl sm:text-3xl text-fest-warm tracking-tight">
+                    {inspectProgram.name}
+                  </h2>
+                  <span className="font-mono text-xs text-fest-accent font-bold">
+                    {inspectProgram.prize}
+                  </span>
+                </div>
+
+                <p className="font-mono text-xs text-fest-accent tracking-wider uppercase font-semibold mb-3">
+                  {inspectProgram.subTitle}
+                </p>
+
+                <p className="text-xs sm:text-sm text-fest-muted font-normal leading-relaxed mb-4">
+                  {inspectProgram.tagline}
+                </p>
+
+                {/* 2x2 Specs Grid */}
+                <div className="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] mb-4 font-mono text-xs">
+                  <div className="flex items-start gap-2">
+                    <Calendar className="w-4 h-4 text-fest-accent shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-fest-muted block">SCHEDULE</span>
+                      <span className="font-bold text-fest-warm text-[11px] sm:text-xs">
+                        {inspectProgram.date} ({inspectProgram.time})
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-4 h-4 text-fest-accent shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-fest-muted block">VENUE</span>
+                      <span className="font-bold text-fest-warm text-[11px] sm:text-xs">
+                        {inspectProgram.venue}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 pt-2 border-t border-white/[0.06] flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-fest-accent shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-fest-muted block">SPECIFICATIONS &amp; RULES</span>
+                      <span className="text-[11px] text-fest-muted font-sans font-medium">
+                        {inspectProgram.requirements}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Direct Action Buttons */}
+                <div className="flex flex-col sm:flex-row items-center gap-2.5">
+                  <button
+                    onClick={() => {
+                      const prog = inspectProgram;
+                      setInspectProgram(null);
+                      onOpenRegister?.(prog);
+                    }}
+                    className="w-full sm:flex-1 py-3.5 px-4 rounded-xl bg-fest-accent hover:bg-fest-accentHover text-fest-black font-display font-black text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-all active:scale-95 shadow-[0_4px_20px_rgba(255,85,0,0.4)]"
+                  >
+                    <Sparkles className="w-4 h-4 text-fest-black" />
+                    <span>REGISTER FOR {inspectProgram.name.toUpperCase()}</span>
+                  </button>
+
+                  <a
+                    href={`https://wa.me/918075480258?text=Hi%20Anandu,%20I%20have%20questions%20about%20${encodeURIComponent(inspectProgram.name)}%20at%20ASTRA%202027`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto py-3.5 px-4 rounded-xl border border-fest-accent/40 bg-fest-accent/10 hover:bg-fest-accent/20 text-fest-warm font-mono text-xs font-bold uppercase flex items-center justify-center gap-2 transition-all active:scale-95"
+                  >
+                    <MessageSquare className="w-4 h-4 text-fest-accent" />
+                    <span>ASK ANANDU</span>
+                  </a>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

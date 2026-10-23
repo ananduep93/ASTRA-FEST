@@ -21,7 +21,7 @@ export function Footer() {
                 alt="ASTRA Logo"
                 width={24}
                 height={24}
-                className="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(245,158,11,0.6)]"
+                className="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(255,85,0,0.6)]"
               />
             </div>
             <div>

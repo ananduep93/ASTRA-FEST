@@ -46,7 +46,7 @@ export function CosmicCanvas() {
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const rand = Math.random();
-      const color = rand > 0.6 ? "#F59E0B" : rand > 0.35 ? "#F97316" : rand > 0.15 ? "#FDE047" : "#FFFFFF";
+      const color = rand > 0.6 ? "#FF5500" : rand > 0.35 ? "#FFA040" : rand > 0.15 ? "#FF7722" : "#FFF9F2";
       particles.push({
         x: 0,
         y: 0,
@@ -99,13 +99,13 @@ export function CosmicCanvas() {
 
       ctx.beginPath();
       ctx.ellipse(cx, cy, ringRadius, ringRadius * 0.42, t * 0.1, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(245, 158, 11, 0.08)";
+      ctx.strokeStyle = "rgba(255, 85, 0, 0.12)";
       ctx.lineWidth = 1;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.ellipse(cx, cy, ringRadius * 1.45, ringRadius * 0.5, -t * 0.07 + 0.8, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(249, 115, 22, 0.06)";
+      ctx.strokeStyle = "rgba(255, 160, 64, 0.08)";
       ctx.lineWidth = 0.8;
       ctx.stroke();
 
@@ -120,13 +120,13 @@ export function CosmicCanvas() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle =
-          p.color === "#F59E0B"
-            ? `rgba(245, 158, 11, ${p.alpha})`
-            : p.color === "#F97316"
-            ? `rgba(249, 115, 22, ${p.alpha})`
-            : p.color === "#FDE047"
-            ? `rgba(253, 224, 71, ${p.alpha})`
-            : `rgba(255, 255, 255, ${p.alpha})`;
+          p.color === "#FF5500"
+            ? `rgba(255, 85, 0, ${p.alpha})`
+            : p.color === "#FFA040"
+            ? `rgba(255, 160, 64, ${p.alpha})`
+            : p.color === "#FF7722"
+            ? `rgba(255, 119, 34, ${p.alpha})`
+            : `rgba(255, 249, 242, ${p.alpha})`;
         ctx.fill();
 
         // Connect nearby particles gently on desktop
@@ -140,7 +140,7 @@ export function CosmicCanvas() {
               ctx.beginPath();
               ctx.moveTo(p.x, p.y);
               ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = "rgba(245, 158, 11, 0.03)";
+              ctx.strokeStyle = "rgba(255, 85, 0, 0.04)";
               ctx.lineWidth = 0.5;
               ctx.stroke();
             }

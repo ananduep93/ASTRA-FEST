@@ -55,7 +55,7 @@ export function Coordinators() {
               onClick={() => setActiveTab("general")}
               className={`py-1.5 px-3 rounded-lg uppercase tracking-wider transition-all ${
                 activeTab === "general"
-                  ? "bg-fest-accent text-fest-black font-black shadow-[0_0_12px_rgba(245,158,11,0.35)]"
+                  ? "bg-fest-accent text-fest-black font-black shadow-[0_0_12px_rgba(255,85,0,0.35)]"
                   : "text-fest-muted hover:text-fest-warm"
               }`}
             >
@@ -65,7 +65,7 @@ export function Coordinators() {
               onClick={() => setActiveTab("departments")}
               className={`py-1.5 px-3 rounded-lg uppercase tracking-wider transition-all ${
                 activeTab === "departments"
-                  ? "bg-fest-accent text-fest-black font-black shadow-[0_0_12px_rgba(245,158,11,0.35)]"
+                  ? "bg-fest-accent text-fest-black font-black shadow-[0_0_12px_rgba(255,85,0,0.35)]"
                   : "text-fest-muted hover:text-fest-warm"
               }`}
             >
@@ -75,7 +75,7 @@ export function Coordinators() {
               onClick={() => setActiveTab("committees")}
               className={`py-1.5 px-3 rounded-lg uppercase tracking-wider transition-all ${
                 activeTab === "committees"
-                  ? "bg-fest-accent text-fest-black font-black shadow-[0_0_12px_rgba(245,158,11,0.35)]"
+                  ? "bg-fest-accent text-fest-black font-black shadow-[0_0_12px_rgba(255,85,0,0.35)]"
                   : "text-fest-muted hover:text-fest-warm"
               }`}
             >
