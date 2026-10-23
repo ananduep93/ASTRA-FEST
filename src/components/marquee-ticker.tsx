@@ -15,7 +15,7 @@ export function MarqueeTicker() {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden border-y border-fest-accent/25 bg-[#0C0D13] py-2.5 z-20 select-none">
+    <div className="relative w-full overflow-hidden border-y border-white/10 bg-[#08080A] py-2.5 z-20 select-none">
       <div className="flex w-fit whitespace-nowrap marquee-h">
         {[...items, ...items].map((text, i) => (
           <div key={i} className="inline-flex items-center gap-3 mx-4 text-xs font-mono font-bold tracking-[0.2em]">

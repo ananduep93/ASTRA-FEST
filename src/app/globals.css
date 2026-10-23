@@ -55,32 +55,6 @@ body {
 
 /* ---- Utility classes ---- */
 
-/* Grain texture overlay */
-.grain::before {
-  content: '';
-  position: fixed;
-  inset: -200%;
-  width: 400%;
-  height: 400%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-  opacity: 0.02;
-  pointer-events: none;
-  z-index: 9999;
-  animation: grain-shift 10s steps(10) infinite;
-}
-@keyframes grain-shift {
-  0%,100% { transform: translate(0,0); }
-  10% { transform: translate(-5%,-10%); }
-  20% { transform: translate(-15%,5%); }
-  30% { transform: translate(7%,-15%); }
-  40% { transform: translate(-5%,20%); }
-  50% { transform: translate(-15%,10%); }
-  60% { transform: translate(15%,0%); }
-  70% { transform: translate(0,10%); }
-  80% { transform: translate(3%,-10%); }
-  90% { transform: translate(-10%,5%); }
-}
-
 /* Accent glow line */
 .accent-line {
   position: relative;

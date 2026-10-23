@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { Navbar } from "@/components/navbar";
-import { CosmicCanvas } from "@/components/cosmic-canvas";
 import { Hero } from "@/components/hero";
 import { MarqueeTicker } from "@/components/marquee-ticker";
 import { ProgramsLineup, Program, allPrograms } from "@/components/programs-lineup";
@@ -30,17 +29,14 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen bg-fest-black text-fest-warm flex flex-col selection:bg-fest-accent selection:text-fest-black overflow-x-clip">
+    <main className="relative min-h-screen bg-[#08080A] text-fest-warm flex flex-col selection:bg-fest-accent selection:text-black overflow-x-clip">
       {/* Silky 120fps Lenis smooth scroll engine for mobile & desktop */}
       <SmoothScroll />
-
-      {/* Background lightweight cosmic orbital visual with solar gold & amber hues */}
-      <CosmicCanvas />
 
       {/* Slim, elegant fixed mobile-first top navigation */}
       <Navbar onOpenRegister={() => handleOpenRegister()} />
 
-      {/* Hero section: tight, monumental ASTRA typography, zero dead space */}
+      {/* Hero section: monumental, clean, confident ASTRA typography */}
       <Hero
         onOpenRegister={() => handleOpenRegister()}
         onSelectArena={handleSelectArena}

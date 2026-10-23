@@ -444,37 +444,8 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
       */}
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-between items-center pt-16 pb-3 px-3 sm:px-6">
         
-        {/* Constant Ambient Glow Background */}
-        <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[620px] h-[340px] sm:h-[620px] bg-fest-accent/[0.04] rounded-full blur-[140px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] sm:w-[480px] h-[260px] sm:h-[480px] bg-fest-secondary/[0.03] rounded-full blur-[110px]" />
-
-          {/* SVG Orbital Horizon Track */}
-          <svg
-            viewBox="0 0 1000 600"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] sm:w-[1300px] h-full opacity-35"
-          >
-            <path
-              d="M 60 490 Q 500 240 940 490"
-              stroke="#FF5500"
-              strokeWidth="1.2"
-              strokeDasharray="6 8"
-              fill="none"
-              className="animate-pulse"
-              style={{ animationDuration: "5s" }}
-            />
-            <path
-              d="M 140 510 Q 500 300 860 510"
-              stroke="#FFA040"
-              strokeWidth="0.8"
-              strokeDasharray="4 6"
-              fill="none"
-              opacity="0.3"
-            />
-            <circle cx="500" cy="240" r="3.5" fill="#FF5500" className="animate-ping" />
-            <circle cx="500" cy="240" r="2" fill="#FFFFFF" />
-          </svg>
-        </div>
+        {/* Clean Static Dark Background (Single Unified Theme, Zero Distractions) */}
+        <div className="absolute inset-0 pointer-events-none -z-10 bg-[#08080A]" />
 
         {/* Top Arena Counter & Category Tracker */}
         <div className="relative z-20 flex items-center justify-between w-full max-w-[340px] sm:max-w-md px-1 font-mono text-[11px]">
