@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { Tag, Trophy, Calendar, MapPin, AlertCircle, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface Program {
@@ -258,7 +258,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
   const targetFloatRef = useRef(0);
   const currentFloatRef = useRef(0);
 
-  // Touch tracking for mobile swipe
+  // Touch tracking for mobile swipe with velocity inertia
   const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
   const touchStartTimeRef = useRef(0);
@@ -274,14 +274,15 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
     }
   }, [targetIndex, total]);
 
-  // Silky 60fps / 120fps physics lerp engine
+  // Silky 60fps / 120fps hardware-composited physics lerp engine
+  // Works identically forwards and backwards with ZERO lag!
   useEffect(() => {
     let animId: number;
     const lerpLoop = () => {
       const diff = targetFloatRef.current - currentFloatRef.current;
-      // High-performance exponential easing
-      if (Math.abs(diff) > 0.0005) {
-        currentFloatRef.current += diff * 0.14;
+      if (Math.abs(diff) > 0.0004) {
+        // Higher response coefficient (0.18) for crisp, lag-free tracking
+        currentFloatRef.current += diff * 0.18;
         setDisplayIndex(currentFloatRef.current);
       }
       animId = requestAnimationFrame(lerpLoop);
@@ -291,7 +292,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Smooth scroll sync: When page scrolls naturally, advance through cards
+  // Smooth scroll sync: Seamless bidirectional tracking (forward AND backward)
   useEffect(() => {
     const handleScroll = () => {
       const section = sectionRef.current;
@@ -302,11 +303,11 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
 
       if (scrollableHeight <= 0) return;
 
-      // Map scroll progress cleanly
+      // Map scroll progress cleanly between 0 and 1
       const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
       const continuousIndex = progress * (total - 1);
 
-      // Only update target if user is not actively swiping
+      // Only update if user isn't currently dragging via touch
       if (!isDraggingRef.current) {
         targetFloatRef.current = continuousIndex;
       }
@@ -316,7 +317,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
     return () => window.removeEventListener("scroll", handleScroll);
   }, [total]);
 
-  // Navigate to target index
+  // Navigate to target index smoothly
   const goTo = useCallback(
     (index: number) => {
       const clamped = Math.max(0, Math.min(total - 1, index));
@@ -335,7 +336,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
     [total]
   );
 
-  // Mobile Touch Swipe Handling with instant 1:1 response and velocity snap
+  // Mobile Touch Swipe Handling with instant 1:1 tactile response & spring snap
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartXRef.current = e.touches[0].clientX;
     touchStartYRef.current = e.touches[0].clientY;
@@ -350,10 +351,9 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
     const diffX = touchStartXRef.current - currentX;
     const diffY = touchStartYRef.current - currentY;
 
-    // If gesture is horizontal:
+    // Prioritize horizontal swipe when gesture is lateral
     if (Math.abs(diffX) > Math.abs(diffY)) {
-      // Direct drag offset mapped to continuous index space
-      const offset = diffX / (window.innerWidth * 0.7);
+      const offset = diffX / (window.innerWidth * 0.65);
       setDragOffset(offset);
     }
   };
@@ -370,8 +370,8 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
 
     const currentBase = Math.round(targetFloatRef.current);
 
-    // If swiped > 30px or flicked quickly with velocity:
-    if (Math.abs(diffX) > 30 || velocity > 0.25) {
+    // If flicked > 25px or with swipe momentum:
+    if (Math.abs(diffX) > 25 || velocity > 0.22) {
       if (diffX > 0) {
         goTo(currentBase + 1);
       } else {
@@ -391,23 +391,23 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
       ref={sectionRef}
       id="programs"
       className="relative bg-fest-black"
-      style={{ height: `${Math.max(180, total * 18)}vh` }}
+      style={{ height: `${Math.max(160, total * 15)}vh` }} // Comfortable scroll traversal distance
     >
       {/* 
         STICKY VIEWPORT:
         Stays constant and fixed while user scrolls through the section!
       */}
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-between items-center pt-16 pb-4 px-3 sm:px-6">
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-between items-center pt-16 pb-3 px-3 sm:px-6">
         
         {/* ========================================================= */}
         {/* CONSTANT FIXED BACKGROUND (SOLAR GOLD & CELESTIAL AMBER)   */}
         {/* ========================================================= */}
         <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
           {/* Subtle center solar gold & amber atmospheric glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[550px] h-[340px] sm:h-[550px] bg-fest-accent/[0.04] rounded-full blur-[110px]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[450px] h-[280px] sm:h-[450px] bg-fest-secondary/[0.03] rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[600px] h-[340px] sm:h-[600px] bg-fest-accent/[0.04] rounded-full blur-[130px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] bg-fest-secondary/[0.03] rounded-full blur-[110px]" />
 
-          {/* SVG Circular Orbital Track indicating the circular wheel */}
+          {/* SVG Circular Orbital Track indicating the 3D circular wheel */}
           <svg
             viewBox="0 0 1000 600"
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] sm:w-[1300px] h-full opacity-35"
@@ -434,43 +434,52 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
           </svg>
         </div>
 
-        {/* Minimal Event Category Pill on Top */}
+        {/* Top Arena Counter & Category Tracker */}
         <div className="relative z-20 flex items-center justify-between w-full max-w-[340px] sm:max-w-md px-1 font-mono text-[11px]">
           <div className="flex items-center gap-1.5 text-fest-accent">
-            <span className="w-1.5 h-1.5 rounded-full bg-fest-accent animate-ping" />
-            <span className="font-bold tracking-widest uppercase">
+            <span className="w-2 h-2 rounded-full bg-fest-accent animate-ping" />
+            <span className="font-black tracking-widest uppercase">
               ARENA {String(activeInt + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
             </span>
           </div>
-          <span className="text-fest-muted uppercase tracking-wider text-[10px]">
+          <span className="px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/10 text-fest-muted uppercase tracking-wider text-[10px] font-semibold">
             {activeProg.category}
           </span>
         </div>
 
         {/* ========================================================= */}
-        {/* CIRCULAR MOTION CAROUSEL STAGE                            */}
+        {/* TRUE 3D CYLINDRICAL ORBIT STAGE (PERSPECTIVE 1200px)       */}
         {/* ========================================================= */}
         <div
-          className="relative z-10 w-full flex-1 flex items-center justify-center overflow-hidden touch-pan-y"
+          className="relative z-10 w-full flex-1 flex items-center justify-center overflow-hidden touch-pan-y perspective-1000"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="relative w-full max-w-[340px] sm:max-w-md h-[400px] sm:h-[430px] flex items-center justify-center">
+          <div className="relative w-full max-w-[340px] sm:max-w-md h-[410px] sm:h-[440px] flex items-center justify-center preserve-3d">
             {allPrograms.map((prog, i) => {
               const delta = i - effectiveFloat;
 
-              // Silky Parametric Circular Motion
-              const angleRad = delta * 0.58;
-              const translateX = Math.sin(angleRad) * 315;
-              const translateY = (1 - Math.cos(angleRad)) * 38;
-              const rotateZ = delta * 6;
-              const rotateY = delta * -16;
-              const scale = Math.max(0.76, 1 - Math.abs(delta) * 0.14);
-              const opacity = Math.max(0, 1 - Math.abs(delta) * 0.65);
-              const isCenter = Math.abs(delta) < 0.45;
-              const zIndex = Math.round(20 - Math.abs(delta) * 3);
-              const blur = Math.abs(delta) > 0.4 ? Math.min(3, Math.abs(delta) * 1.5) : 0;
+              // Culling: completely skip calculations for distant off-screen cards to maximize 120Hz mobile performance!
+              if (Math.abs(delta) > 3.2) {
+                return null;
+              }
+
+              // True 3D Cylindrical Orbit Math
+              // angle in radians around the virtual cylinder
+              const angleRad = delta * 0.54;
+              const radius = 330;
+              const translateX = Math.sin(angleRad) * radius;
+              // Push flanking cards backwards into 3D space!
+              const translateZ = (Math.cos(angleRad) - 1) * 220;
+              const translateY = (1 - Math.cos(angleRad)) * 26;
+              // Rotate cards inwards in 3D perspective
+              const rotateY = -angleRad * 52;
+              const rotateZ = delta * 3.5;
+              const scale = Math.max(0.74, 1 - Math.abs(delta) * 0.12);
+              const opacity = Math.max(0, 1 - Math.abs(delta) * 0.42);
+              const isCenter = Math.abs(delta) < 0.42;
+              const zIndex = Math.round(30 - Math.abs(delta) * 8);
 
               return (
                 <div
@@ -479,26 +488,25 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                     if (!isCenter) goTo(i);
                   }}
                   style={{
-                    transform: `translate3d(${translateX}px, ${translateY}px, 0px) rotateZ(${rotateZ}deg) rotateY(${rotateY}deg) scale(${scale})`,
+                    transform: `translate3d(${translateX}px, ${translateY}px, ${translateZ}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`,
                     opacity,
                     zIndex,
-                    filter: blur > 0 ? `blur(${blur}px)` : "none",
                     pointerEvents: Math.abs(delta) < 1.2 ? "auto" : "none",
                   }}
-                  className={`absolute inset-0 flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-[#0E0F17] select-none will-change-transform transition-colors ${
+                  className={`absolute inset-0 flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-[#0D0E16] select-none will-change-transform backface-hidden transition-colors ${
                     isCenter
                       ? "border border-fest-accent/40 shadow-[0_12px_45px_rgba(245,158,11,0.22)]"
                       : "border border-white/[0.08] cursor-pointer hover:border-fest-accent/30"
                   }`}
                 >
-                  {/* Card Header */}
+                  {/* Card Top: Number, Badge, Prize */}
                   <div>
                     <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 mb-2.5">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-[11px] font-black text-fest-accent px-2 py-0.5 rounded bg-fest-accent/15 border border-fest-accent/30">
                           #{prog.number}
                         </span>
-                        <span className="font-mono text-[9px] text-fest-muted tracking-widest uppercase">
+                        <span className="font-mono text-[9px] text-fest-muted tracking-widest uppercase font-semibold">
                           {prog.badge}
                         </span>
                       </div>
@@ -508,13 +516,14 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                       </div>
                     </div>
 
+                    {/* Program Title & Subhead (Clean Space Grotesk / Modern Sans) */}
                     <h3 className="font-display font-black text-2xl sm:text-3xl text-fest-warm tracking-tight">
                       {prog.name}
                     </h3>
-                    <p className="font-mono text-[10px] text-fest-accent font-semibold tracking-wider uppercase mb-1">
+                    <p className="font-mono text-[10px] sm:text-[11px] text-fest-accent font-bold tracking-wider uppercase mb-1">
                       {prog.subTitle}
                     </p>
-                    <p className="text-[11px] sm:text-xs text-fest-muted font-light leading-snug line-clamp-2">
+                    <p className="text-[11px] sm:text-xs text-fest-muted font-normal leading-snug line-clamp-2">
                       {prog.tagline}
                     </p>
                   </div>
@@ -564,7 +573,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                       e.stopPropagation();
                       onOpenRegister?.(prog);
                     }}
-                    className="w-full mt-2.5 py-3 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-fest-accentLight transition-all duration-300 active:scale-95 shadow-[0_4px_18px_rgba(245,158,11,0.35)]"
+                    className="w-full mt-2.5 py-3 rounded-xl bg-gradient-to-r from-fest-accent to-fest-secondary hover:from-fest-accentLight hover:to-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-[0_4px_18px_rgba(245,158,11,0.35)]"
                   >
                     <span>REGISTER FOR {prog.name.toUpperCase()}</span>
                     <Sparkles className="w-3.5 h-3.5 text-fest-black" />

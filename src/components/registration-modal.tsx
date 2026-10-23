@@ -62,7 +62,7 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
     allPrograms.find((p) => p.id === selectedProgramId) || allPrograms[0];
 
   const handleCopyUpi = () => {
-    navigator.clipboard.writeText("astrafest@upi");
+    navigator.clipboard.writeText("8075480258@upi");
     setCopiedUpi(true);
     setTimeout(() => setCopiedUpi(false), 2000);
   };
@@ -70,11 +70,11 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !phone || !college) {
-      alert("Please fill in your Name, Phone Number, and College Name.");
+      alert("Please fill in your name, contact phone, and college name.");
       return;
     }
 
-    const generatedId = `ASTRA27-${Math.floor(1000 + Math.random() * 9000)}`;
+    const generatedId = `ASTRA-${Math.floor(1000 + Math.random() * 9000)}`;
     setRegId(generatedId);
     setSubmitted(true);
 
@@ -131,14 +131,14 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "100%", opacity: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 280 }}
-          className="relative w-full max-w-lg bg-[#0C0D15] border-t sm:border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-[0_0_60px_rgba(245,158,11,0.18)] z-10 max-h-[92vh] overflow-y-auto scrollbar-none"
+          className="relative w-full max-w-lg bg-[#0E0F16] border-t sm:border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-[0_0_60px_rgba(245,158,11,0.18)] z-10 max-h-[92vh] overflow-y-auto scrollbar-none"
         >
           {/* Top Bar */}
           <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">
             <div className="flex items-center gap-2.5">
               <span className="w-2 h-2 rounded-full bg-fest-accent animate-ping" />
               <div>
-                <span className="font-mono text-[10px] tracking-widest text-fest-accent uppercase block">
+                <span className="font-mono text-[10px] tracking-widest text-fest-accent uppercase block font-bold">
                   OFFICIAL REGISTRATION PORTAL
                 </span>
                 <h3 className="font-display font-black text-lg sm:text-xl text-fest-warm">
@@ -159,20 +159,20 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
               {/* Event Selector Dropdown: Shows all 15 events */}
               <div>
                 <label className="block font-mono text-[11px] text-fest-muted uppercase tracking-wider mb-1.5 flex items-center justify-between">
-                  <span className="flex items-center gap-1 text-fest-warm">
+                  <span className="flex items-center gap-1 text-fest-warm font-semibold">
                     <Layers className="w-3.5 h-3.5 text-fest-accent" />
                     SELECT PROGRAM / EVENT
                   </span>
-                  <span className="text-fest-accent text-[10px]">15 PROGRAMS AVAILABLE</span>
+                  <span className="text-fest-accent text-[10px] font-bold">15 PROGRAMS AVAILABLE</span>
                 </label>
                 <div className="relative">
                   <select
                     value={selectedProgramId}
                     onChange={(e) => setSelectedProgramId(e.target.value)}
-                    className="w-full py-2.5 px-3 rounded-xl bg-[#12131F] border border-white/15 text-fest-warm font-mono text-xs focus:outline-none focus:border-fest-accent transition-colors appearance-none"
+                    className="w-full py-2.5 px-3 rounded-xl bg-[#141522] border border-white/15 text-fest-warm font-mono text-xs focus:outline-none focus:border-fest-accent transition-colors appearance-none cursor-pointer"
                   >
                     {allPrograms.map((p) => (
-                      <option key={p.id} value={p.id} className="bg-[#0C0D15] text-fest-warm">
+                      <option key={p.id} value={p.id} className="bg-[#0E0F16] text-fest-warm">
                         #{p.number} — {p.name} ({p.category})
                       </option>
                     ))}
@@ -192,38 +192,40 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
                   <p className="text-fest-muted text-[10px] leading-tight mt-0.5">
                     {currentProgram.tagline}
                   </p>
-                  <div className="flex items-center gap-2 mt-1.5 text-[10px] text-fest-warm">
-                    <span className="text-fest-accent">Venue:</span> {currentProgram.venue}
+                  <div className="flex items-center gap-3 mt-1.5 text-[9px] text-fest-muted">
+                    <span>Venue: <strong className="text-fest-warm font-normal">{currentProgram.venue}</strong></span>
+                    <span>Badge: <strong className="text-fest-accent font-normal">{currentProgram.badge}</strong></span>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-fest-accent/15 border border-fest-accent/30 text-[9px] text-fest-accent font-bold uppercase shrink-0">
-                  {currentProgram.badge}
-                </span>
+                <div className="text-right shrink-0">
+                  <span className="text-fest-accent font-bold block text-xs">
+                    {currentProgram.fee}
+                  </span>
+                  <span className="text-[9px] text-fest-secondary font-semibold">
+                    {currentProgram.prize}
+                  </span>
+                </div>
               </div>
 
-              {/* Form Inputs Grid */}
+              {/* Participant Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
-                {/* Full Name */}
                 <div>
-                  <label className="block text-[10px] text-fest-muted uppercase tracking-wider mb-1">
+                  <label className="block text-fest-muted text-[10px] uppercase mb-1">
                     Participant / Team Lead Name *
                   </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Rahul Varma"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="w-full py-2.5 px-3 rounded-xl bg-[#12131F] border border-white/10 text-fest-warm text-xs focus:outline-none focus:border-fest-accent transition-colors"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Rahul Sharma"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full py-2 px-3 rounded-xl bg-[#141522] border border-white/10 text-fest-warm focus:outline-none focus:border-fest-accent"
+                  />
                 </div>
 
-                {/* Mobile / WhatsApp Number */}
                 <div>
-                  <label className="block text-[10px] text-fest-muted uppercase tracking-wider mb-1">
-                    Phone / WhatsApp Number *
+                  <label className="block text-fest-muted text-[10px] uppercase mb-1">
+                    WhatsApp Phone Number *
                   </label>
                   <input
                     type="tel"
@@ -231,125 +233,107 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
                     placeholder="e.g. 9876543210"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full py-2.5 px-3 rounded-xl bg-[#12131F] border border-white/10 text-fest-warm text-xs focus:outline-none focus:border-fest-accent transition-colors"
+                    className="w-full py-2 px-3 rounded-xl bg-[#141522] border border-white/10 text-fest-warm focus:outline-none focus:border-fest-accent"
                   />
                 </div>
 
-                {/* College Name */}
                 <div>
-                  <label className="block text-[10px] text-fest-muted uppercase tracking-wider mb-1">
+                  <label className="block text-fest-muted text-[10px] uppercase mb-1">
                     College / Institution Name *
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Farook College"
+                    placeholder="e.g. St. Joseph's College"
                     value={college}
                     onChange={(e) => setCollege(e.target.value)}
-                    className="w-full py-2.5 px-3 rounded-xl bg-[#12131F] border border-white/10 text-fest-warm text-xs focus:outline-none focus:border-fest-accent transition-colors"
+                    className="w-full py-2 px-3 rounded-xl bg-[#141522] border border-white/10 text-fest-warm focus:outline-none focus:border-fest-accent"
                   />
                 </div>
 
-                {/* Department & Year */}
                 <div>
-                  <label className="block text-[10px] text-fest-muted uppercase tracking-wider mb-1">
-                    Department & Semester
+                  <label className="block text-fest-muted text-[10px] uppercase mb-1">
+                    Department / Course (Optional)
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. BCA, 4th Sem"
+                    placeholder="e.g. BCA / BBA / B.Com"
                     value={dept}
                     onChange={(e) => setDept(e.target.value)}
-                    className="w-full py-2.5 px-3 rounded-xl bg-[#12131F] border border-white/10 text-fest-warm text-xs focus:outline-none focus:border-fest-accent transition-colors"
+                    className="w-full py-2 px-3 rounded-xl bg-[#141522] border border-white/10 text-fest-warm focus:outline-none focus:border-fest-accent"
                   />
                 </div>
               </div>
 
-              {/* Number of Members */}
+              {/* Team Size */}
               <div>
-                <label className="block font-mono text-[10px] text-fest-muted uppercase tracking-wider mb-1">
-                  Total Team Members (1 for Solo)
+                <label className="block font-mono text-[10px] text-fest-muted uppercase mb-1">
+                  Total Team Members (Including You)
                 </label>
-                <div className="flex gap-2">
-                  {["1 (Solo)", "2 (Duo)", "3-4", "Squad (5+)"].map((s) => (
+                <div className="grid grid-cols-5 gap-1.5 font-mono text-xs">
+                  {["1", "2", "3", "4", "5+"].map((size) => (
                     <button
+                      key={size}
                       type="button"
-                      key={s}
-                      onClick={() => setTeamSize(s)}
-                      className={`flex-1 py-1.5 rounded-lg border font-mono text-[10px] transition-all ${
-                        teamSize === s
-                          ? "bg-fest-accent/20 border-fest-accent text-fest-accent font-bold"
+                      onClick={() => setTeamSize(size)}
+                      className={`py-1.5 rounded-lg border transition-all ${
+                        teamSize === size
+                          ? "bg-fest-accent text-fest-black font-black border-fest-accent shadow-sm"
                           : "border-white/10 bg-white/5 text-fest-muted hover:text-fest-warm"
                       }`}
                     >
-                      {s}
+                      {size}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* UPI Verification Box */}
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] font-mono text-xs">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] text-fest-muted uppercase tracking-wider">
-                    FESTIVAL UPI ID:
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleCopyUpi}
-                    className="inline-flex items-center gap-1 text-[10px] text-fest-accent hover:underline"
-                  >
-                    {copiedUpi ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                    <span>{copiedUpi ? "COPIED" : "COPY UPI"}</span>
-                  </button>
+              {/* Fee Notice & Coordinator Verification Info */}
+              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.08] font-mono text-[11px] space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-fest-warm font-semibold">Payment &amp; Slot Confirmation</span>
+                  <span className="text-[10px] text-fest-accent font-bold">FAST WHATSAPP VERIFY</span>
                 </div>
-                <div className="p-2 rounded-lg bg-black/40 border border-white/10 flex items-center justify-between text-fest-warm text-xs mb-2">
-                  <span className="font-bold tracking-wider">astrafest@upi</span>
-                  <span className="text-[10px] text-fest-accent font-semibold">1-DAY PASS</span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Optional: Enter UPI Transaction ID / UTR"
-                  value={upiRef}
-                  onChange={(e) => setUpiRef(e.target.value)}
-                  className="w-full py-2 px-3 rounded-lg bg-[#12131F] border border-white/10 text-fest-warm text-[11px] focus:outline-none focus:border-fest-accent"
-                />
+                <p className="text-fest-muted text-[10px] leading-relaxed">
+                  Upon clicking submit, your registration details will open directly in WhatsApp to student coordinator <strong>{coordinatorName}</strong> ({coordinatorPhone}) for instant verification and official slot allocation.
+                </p>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit CTA */}
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white active:scale-95 transition-all shadow-[0_4px_20px_rgba(0,240,255,0.35)]"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-fest-accent to-fest-secondary hover:from-fest-accentLight hover:to-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 shadow-[0_4px_24px_rgba(245,158,11,0.35)] active:scale-95"
               >
-                <span>CONFIRM REGISTRATION VIA WHATSAPP</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>CONFIRM &amp; NOTIFY VIA WHATSAPP</span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
               </button>
             </form>
           ) : (
-            /* Digital Registration Pass Success View */
-            <div className="py-2 text-center font-mono">
-              <div className="w-12 h-12 rounded-full bg-fest-accent/20 border border-fest-accent text-fest-accent flex items-center justify-center mx-auto mb-3">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <h4 className="font-display font-black text-xl text-fest-warm mb-1">
-                REGISTRATION SUBMITTED!
-              </h4>
-              <p className="text-xs text-fest-muted mb-4">
-                Your entry has been recorded and routed to Coordinator{" "}
-                <strong className="text-fest-accent">{coordinatorName}</strong>.
-              </p>
-
-              {/* Digital Pass Ticket Box */}
-              <div className="p-4 rounded-2xl bg-[#11121C] border border-fest-accent/30 text-left space-y-2 mb-5">
-                <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                  <span className="text-[10px] text-fest-muted">ENTRY PASS ID:</span>
-                  <span className="text-xs font-black text-fest-accent tracking-widest">{regId}</span>
+            /* Digital Ticket Confirmation */
+            <div className="py-4 space-y-4 font-mono">
+              <div className="text-center space-y-1">
+                <div className="w-12 h-12 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center text-green-400 mx-auto mb-2">
+                  <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <div className="text-xs text-fest-warm font-semibold">
+                <h4 className="font-display font-black text-xl text-fest-warm">
+                  REGISTRATION INITIATED!
+                </h4>
+                <p className="text-xs text-fest-muted">
+                  Official Slot Pass Generated · Sent to Coordinator
+                </p>
+              </div>
+
+              {/* Digital Pass Card */}
+              <div className="p-4 rounded-2xl border border-fest-accent/30 bg-gradient-to-b from-fest-accent/10 to-transparent space-y-2">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span className="text-xs text-fest-muted">PASS ID</span>
+                  <span className="font-black text-fest-accent text-sm tracking-wider">{regId}</span>
+                </div>
+                <div className="text-xs text-fest-warm font-bold">
                   {currentProgram.name} (#{currentProgram.number})
                 </div>
                 <div className="text-[11px] text-fest-muted">
-                  Participant: <span className="text-fest-warm">{fullName}</span>
+                  Lead: <span className="text-fest-warm">{fullName}</span> · Phone: <span className="text-fest-warm">{phone}</span>
                 </div>
                 <div className="text-[11px] text-fest-muted">
                   College: <span className="text-fest-warm">{college}</span>
@@ -365,7 +349,7 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
                   href={`https://wa.me/91${coordinatorPhone}?text=Hi%20${coordinatorName},%20I%20have%20registered%20for%20ASTRA%202027%20(${regId})`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 rounded-xl bg-green-500 hover:bg-green-400 text-black font-display font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
+                  className="w-full py-3 rounded-xl bg-green-500 hover:bg-green-400 text-black font-display font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm"
                 >
                   <MessageSquare className="w-4 h-4 fill-current" />
                   <span>Chat with Anandu EP on WhatsApp</span>

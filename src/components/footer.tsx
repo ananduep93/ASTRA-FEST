@@ -9,7 +9,7 @@ export function Footer() {
   };
 
   return (
-    <footer id="info" className="relative border-t border-white/[0.08] bg-[#08080C] py-10 sm:py-14 px-4 sm:px-6 lg:px-12 text-fest-muted text-xs font-mono">
+    <footer id="info" className="relative border-t border-white/[0.08] bg-[#07070A] py-12 sm:py-16 px-4 sm:px-6 lg:px-12 text-fest-muted text-xs font-mono">
       <div className="max-w-5xl mx-auto flex flex-col space-y-8">
         
         {/* Top Strip: Brand & Back to top */}
@@ -26,10 +26,10 @@ export function Footer() {
             </div>
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display font-black text-lg tracking-[0.16em] text-fest-warm">
+                <span className="font-display font-black text-lg tracking-[0.14em] text-fest-warm">
                   ASTRA
                 </span>
-                <span className="text-[10px] text-fest-accent font-bold">2027</span>
+                <span className="text-[10px] text-fest-accent font-black">2027</span>
               </div>
               <p className="text-[10px] text-fest-muted/70">
                 ONE DAY MEGA FEST // Don Bosco College Mampetta
@@ -39,7 +39,7 @@ export function Footer() {
 
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:border-fest-accent/40 text-fest-warm text-[11px] transition-colors active:scale-95"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:border-fest-accent/40 text-fest-warm text-[11px] transition-all active:scale-95"
           >
             <span>BACK TO TOP</span>
             <ArrowUp className="w-3.5 h-3.5" />
@@ -102,40 +102,32 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Venue & Host Institution */}
+          {/* Location & Institution */}
           <div>
             <span className="font-mono text-[10px] font-bold text-fest-accent tracking-widest uppercase block mb-2">
-              HOST INSTITUTION
+              VENUE &amp; HOST
             </span>
-            <p className="text-fest-warm font-medium">
-              Don Bosco College, Mampetta
+            <p className="text-fest-muted leading-snug mb-2">
+              <strong className="text-fest-warm block">Don Bosco College</strong>
+              Mampetta, Mukkam, Kozhikode, Kerala 673602
             </p>
-            <p className="text-fest-muted text-[10px]">
-              Mukkam, Kozhikode, Kerala — 673602
-            </p>
-            <div className="pt-2">
-              <a
-                href="https://maps.google.com/?q=Don+Bosco+College+Mampetta+Mukkam+Kozhikode"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-[10px] text-fest-accent hover:underline"
-              >
-                <MapPin className="w-3 h-3" />
-                <span>Open Location in Google Maps ↗</span>
-              </a>
+            <div className="flex items-center gap-1.5 text-fest-accent text-[10px]">
+              <MapPin className="w-3.5 h-3.5 shrink-0" />
+              <span>Main Auditorium &amp; Open Amphitheatre</span>
             </div>
-            <p className="text-fest-secondary font-semibold text-[10px] pt-2">
-              ✦ PER ASPERA AD ASTRA ✦
-            </p>
           </div>
         </div>
 
-        {/* Bottom Legal / Copyright strip */}
-        <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-fest-muted/50">
-          <span>© 2027 ASTRA FESTIVAL · DON BOSCO COLLEGE MAMPETTA</span>
-          <span>ONE DAY MEGA FESTIVAL</span>
+        {/* Bottom copyright & attribution */}
+        <div className="pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-fest-muted/70">
+          <div>
+            © 2027 ASTRA FEST. All rights reserved. Designed for Don Bosco College Mampetta.
+          </div>
+          <div className="flex items-center gap-1.5 text-fest-accent">
+            <Sparkles className="w-3 h-3" />
+            <span>Tech Team Lead: Anandu EP</span>
+          </div>
         </div>
-
       </div>
     </footer>
   );
