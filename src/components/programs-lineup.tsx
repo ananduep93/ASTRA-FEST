@@ -445,7 +445,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-between items-center pt-16 pb-3 px-3 sm:px-6">
         
         {/* Clean Static Dark Background (Single Unified Theme, Zero Distractions) */}
-        <div className="absolute inset-0 pointer-events-none -z-10 bg-[#08080A]" />
+        <div className="absolute inset-0 pointer-events-none -z-10 bg-[#080A0E]" />
 
         {/* Top Arena Counter & Category Tracker */}
         <div className="relative z-20 flex items-center justify-between w-full max-w-[340px] sm:max-w-md px-1 font-mono text-[11px]">
@@ -608,7 +608,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ type: "spring", damping: 26, stiffness: 340 }}
-              className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0D0E15] border border-fest-accent/40 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_35px_rgba(255,85,0,0.25)] p-4 sm:p-6 text-fest-warm select-none"
+              className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0B0E14] border border-fest-accent/40 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_35px_rgba(255,85,0,0.25)] p-4 sm:p-6 text-fest-warm select-none"
             >
               {/* Close Button */}
               <button

@@ -10,13 +10,13 @@ const config: Config = {
     extend: {
       colors: {
         fest: {
-          black: "#08080A",
-          dark: "#0E0F14",
-          surface: "#14151D",
-          card: "#181924",
+          black: "#080A0E",
+          dark: "#0B0E14",
+          surface: "#10141C",
+          card: "#141822",
           border: "rgba(255, 85, 0, 0.22)",
-          warm: "#FFF9F2", // Warm White
-          muted: "#A0A0AA",
+          warm: "#F4F6FB", // Crisp off-white
+          muted: "#94A3B8",
           accent: "#FF5500", // Electric Orange
           accentLight: "#FF7722",
           accentHover: "#E64A00",
@@ -26,8 +26,10 @@ const config: Config = {
         },
       },
       fontFamily: {
+        bebas: ["'Bebas Neue'", "sans-serif"],
+        syne: ["'Syne'", "sans-serif"],
         sans: ["var(--font-sans)", "Plus Jakarta Sans", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Space Grotesk", "Plus Jakarta Sans", "sans-serif"],
+        display: ["'Bebas Neue'", "'Syne'", "Space Grotesk", "sans-serif"],
         mono: ["var(--font-mono)", "JetBrains Mono", "monospace"],
       },
       letterSpacing: {

@@ -29,7 +29,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#08080A] text-fest-warm flex flex-col selection:bg-fest-accent selection:text-black overflow-x-clip">
+    <main className="relative min-h-screen bg-[#080A0E] text-fest-warm flex flex-col selection:bg-fest-accent selection:text-black overflow-x-clip">
       {/* Silky 120fps Lenis smooth scroll engine for mobile & desktop */}
       <SmoothScroll />
 

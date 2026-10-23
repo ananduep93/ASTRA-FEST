@@ -131,7 +131,7 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "100%", opacity: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 280 }}
-          className="relative w-full max-w-lg bg-[#0E0F16] border-t sm:border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-[0_0_60px_rgba(255,85,0,0.22)] z-10 max-h-[92vh] overflow-y-auto scrollbar-none"
+          className="relative w-full max-w-lg bg-[#0B0E14] border-t sm:border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-[0_0_60px_rgba(255,85,0,0.22)] z-10 max-h-[92vh] overflow-y-auto scrollbar-none"
         >
           {/* Top Bar */}
           <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">

@@ -34,7 +34,7 @@ export function Coordinators() {
   ];
 
   return (
-    <section id="coordinators" className="relative py-14 sm:py-20 px-4 sm:px-6 lg:px-12 bg-[#07070A] border-t border-white/[0.08]">
+    <section id="coordinators" className="relative py-14 sm:py-20 px-4 sm:px-6 lg:px-12 bg-[#080A0E] border-t border-white/[0.08]">
       <div className="max-w-4xl mx-auto">
         
         {/* Header */}

@@ -9,7 +9,7 @@ export function Footer() {
   };
 
   return (
-    <footer id="info" className="relative border-t border-white/[0.08] bg-[#07070A] py-12 sm:py-16 px-4 sm:px-6 lg:px-12 text-fest-muted text-xs font-mono">
+    <footer id="info" className="relative border-t border-white/[0.08] bg-[#080A0E] py-12 sm:py-16 px-4 sm:px-6 lg:px-12 text-fest-muted text-xs font-mono">
       <div className="max-w-5xl mx-auto flex flex-col space-y-8">
         
         {/* Top Strip: Brand & Back to top */}
