@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Tag, Trophy, Calendar, MapPin, AlertCircle, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface Program {
@@ -255,15 +255,15 @@ interface ProgramsLineupProps {
 export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [displayIndex, setDisplayIndex] = useState(0);
-  const targetFloatRef = useRef(0);
-  const currentFloatRef = useRef(0);
 
-  // Touch tracking for mobile swipe with velocity inertia
+  // References for continuous 60fps/120fps animation loop
+  const targetIndexRef = useRef(0);
+  const currentIndexRef = useRef(0);
+
+  // Swipe detection references (lateral flick)
   const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
   const touchStartTimeRef = useRef(0);
-  const isDraggingRef = useRef(false);
-  const [dragOffset, setDragOffset] = useState(0);
 
   const total = allPrograms.length;
 
@@ -274,116 +274,85 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
     }
   }, [targetIndex, total]);
 
-  // Silky 60fps / 120fps hardware-composited physics lerp engine
-  // Works identically forwards and backwards with ZERO lag!
+  // Unified, High-Performance Animation Engine:
+  // Reads window.scrollY directly inside requestAnimationFrame without event overhead.
+  // Perfectly symmetrical forward and backward movement with ZERO lag!
   useEffect(() => {
     let animId: number;
-    const lerpLoop = () => {
-      const diff = targetFloatRef.current - currentFloatRef.current;
-      if (Math.abs(diff) > 0.0004) {
-        // Higher response coefficient (0.18) for crisp, lag-free tracking
-        currentFloatRef.current += diff * 0.18;
-        setDisplayIndex(currentFloatRef.current);
-      }
-      animId = requestAnimationFrame(lerpLoop);
-    };
 
-    animId = requestAnimationFrame(lerpLoop);
-    return () => cancelAnimationFrame(animId);
-  }, []);
-
-  // Smooth scroll sync: Seamless bidirectional tracking (forward AND backward)
-  useEffect(() => {
-    const handleScroll = () => {
+    const renderLoop = () => {
       const section = sectionRef.current;
-      if (!section) return;
+      if (section) {
+        const sectionTop = section.offsetTop;
+        const scrollable = section.offsetHeight - window.innerHeight;
 
-      const rect = section.getBoundingClientRect();
-      const scrollableHeight = section.offsetHeight - window.innerHeight;
-
-      if (scrollableHeight <= 0) return;
-
-      // Map scroll progress cleanly between 0 and 1
-      const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
-      const continuousIndex = progress * (total - 1);
-
-      // Only update if user isn't currently dragging via touch
-      if (!isDraggingRef.current) {
-        targetFloatRef.current = continuousIndex;
+        if (scrollable > 0) {
+          const currentScroll = window.scrollY - sectionTop;
+          const rawProgress = Math.max(0, Math.min(1, currentScroll / scrollable));
+          targetIndexRef.current = rawProgress * (total - 1);
+        }
       }
+
+      // Smooth exponential lerp damping (0.22 response rate = buttery 120Hz tracking)
+      const diff = targetIndexRef.current - currentIndexRef.current;
+      if (Math.abs(diff) > 0.0003) {
+        currentIndexRef.current += diff * 0.22;
+        setDisplayIndex(currentIndexRef.current);
+      }
+
+      animId = requestAnimationFrame(renderLoop);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    animId = requestAnimationFrame(renderLoop);
+    return () => cancelAnimationFrame(animId);
   }, [total]);
 
-  // Navigate to target index smoothly
+  // Navigate to target index smoothly by scrolling the page
   const goTo = useCallback(
     (index: number) => {
       const clamped = Math.max(0, Math.min(total - 1, index));
-      targetFloatRef.current = clamped;
-
       const section = sectionRef.current;
       if (section) {
-        const top = section.offsetTop;
+        const sectionTop = section.offsetTop;
         const scrollable = section.offsetHeight - window.innerHeight;
         if (scrollable > 0) {
-          const targetScroll = top + (clamped / (total - 1 || 1)) * scrollable;
+          const targetScroll = sectionTop + (clamped / (total - 1 || 1)) * scrollable;
           window.scrollTo({ top: targetScroll, behavior: "smooth" });
         }
       }
+      targetIndexRef.current = clamped;
     },
     [total]
   );
 
-  // Mobile Touch Swipe Handling with instant 1:1 tactile response & spring snap
+  // Handle Touch Gesture on Mobile (Only triggers on distinct lateral swipe)
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartXRef.current = e.touches[0].clientX;
     touchStartYRef.current = e.touches[0].clientY;
     touchStartTimeRef.current = Date.now();
-    isDraggingRef.current = true;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current) return;
-    const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
-    const diffX = touchStartXRef.current - currentX;
-    const diffY = touchStartYRef.current - currentY;
-
-    // Prioritize horizontal swipe when gesture is lateral
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      const offset = diffX / (window.innerWidth * 0.65);
-      setDragOffset(offset);
-    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current) return;
-    isDraggingRef.current = false;
-
     const diffX = touchStartXRef.current - e.changedTouches[0].clientX;
+    const diffY = touchStartYRef.current - e.changedTouches[0].clientY;
     const duration = Date.now() - touchStartTimeRef.current;
-    const velocity = Math.abs(diffX) / Math.max(1, duration);
 
-    setDragOffset(0);
+    // Only process as swipe if movement is predominantly horizontal
+    if (Math.abs(diffX) > Math.abs(diffY) * 1.6 && Math.abs(diffX) > 35) {
+      const velocity = Math.abs(diffX) / Math.max(1, duration);
+      const currentInt = Math.round(targetIndexRef.current);
 
-    const currentBase = Math.round(targetFloatRef.current);
-
-    // If flicked > 25px or with swipe momentum:
-    if (Math.abs(diffX) > 25 || velocity > 0.22) {
       if (diffX > 0) {
-        goTo(currentBase + 1);
+        // Swiped left -> advance forward
+        goTo(currentInt + 1);
       } else {
-        goTo(currentBase - 1);
+        // Swiped right -> advance backward
+        goTo(currentInt - 1);
       }
-    } else {
-      goTo(currentBase);
     }
   };
 
-  const effectiveFloat = displayIndex + dragOffset;
-  const activeInt = Math.max(0, Math.min(total - 1, Math.round(effectiveFloat)));
+  const activeInt = Math.max(0, Math.min(total - 1, Math.round(displayIndex)));
   const activeProg = allPrograms[activeInt];
 
   return (
@@ -391,7 +360,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
       ref={sectionRef}
       id="programs"
       className="relative bg-fest-black"
-      style={{ height: `${Math.max(160, total * 15)}vh` }} // Comfortable scroll traversal distance
+      style={{ height: `${Math.max(180, total * 18)}vh` }} // Comfortable scroll traversal distance
     >
       {/* 
         STICKY VIEWPORT:
@@ -453,33 +422,30 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
         <div
           className="relative z-10 w-full flex-1 flex items-center justify-center overflow-hidden touch-pan-y perspective-1000"
           onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="relative w-full max-w-[340px] sm:max-w-md h-[410px] sm:h-[440px] flex items-center justify-center preserve-3d">
+          <div className="relative w-full max-w-[330px] sm:max-w-md h-[390px] sm:h-[430px] flex items-center justify-center preserve-3d">
             {allPrograms.map((prog, i) => {
-              const delta = i - effectiveFloat;
+              const delta = i - displayIndex;
 
-              // Culling: completely skip calculations for distant off-screen cards to maximize 120Hz mobile performance!
-              if (Math.abs(delta) > 3.2) {
+              // Card Culling: completely skip calculation for cards beyond view
+              if (Math.abs(delta) > 2.6) {
                 return null;
               }
 
               // True 3D Cylindrical Orbit Math
-              // angle in radians around the virtual cylinder
-              const angleRad = delta * 0.54;
+              const angleRad = delta * 0.52;
               const radius = 330;
               const translateX = Math.sin(angleRad) * radius;
-              // Push flanking cards backwards into 3D space!
-              const translateZ = (Math.cos(angleRad) - 1) * 220;
-              const translateY = (1 - Math.cos(angleRad)) * 26;
-              // Rotate cards inwards in 3D perspective
-              const rotateY = -angleRad * 52;
-              const rotateZ = delta * 3.5;
-              const scale = Math.max(0.74, 1 - Math.abs(delta) * 0.12);
-              const opacity = Math.max(0, 1 - Math.abs(delta) * 0.42);
+              // Push flanking cards backwards into 3D space
+              const translateZ = (Math.cos(angleRad) - 1) * 260;
+              const translateY = Math.abs(delta) * 14;
+              // Rotate cards inwards towards center in real 3D perspective
+              const rotateY = -angleRad * 56;
+              const scale = Math.max(0.74, 1 - Math.abs(delta) * 0.14);
+              const opacity = Math.max(0, 1 - Math.abs(delta) * 0.44);
               const isCenter = Math.abs(delta) < 0.42;
-              const zIndex = Math.round(30 - Math.abs(delta) * 8);
+              const zIndex = Math.round(25 - Math.abs(delta) * 6);
 
               return (
                 <div
@@ -488,39 +454,39 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                     if (!isCenter) goTo(i);
                   }}
                   style={{
-                    transform: `translate3d(${translateX}px, ${translateY}px, ${translateZ}px) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) scale(${scale})`,
+                    transform: `translate3d(${translateX}px, ${translateY}px, ${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
                     opacity,
                     zIndex,
                     pointerEvents: Math.abs(delta) < 1.2 ? "auto" : "none",
                   }}
-                  className={`absolute inset-0 flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-[#0D0E16] select-none will-change-transform backface-hidden transition-colors ${
+                  className={`absolute inset-0 flex flex-col justify-between p-3.5 sm:p-5 rounded-2xl bg-[#0E0F16] select-none will-change-transform backface-hidden transition-colors ${
                     isCenter
-                      ? "border border-fest-accent/40 shadow-[0_12px_45px_rgba(245,158,11,0.22)]"
+                      ? "border border-fest-accent/50 shadow-[0_16px_50px_rgba(245,158,11,0.25)]"
                       : "border border-white/[0.08] cursor-pointer hover:border-fest-accent/30"
                   }`}
                 >
                   {/* Card Top: Number, Badge, Prize */}
                   <div>
-                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[11px] font-black text-fest-accent px-2 py-0.5 rounded bg-fest-accent/15 border border-fest-accent/30">
+                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-2 sm:pb-2.5 sm:mb-2.5">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <span className="font-mono text-[10px] sm:text-[11px] font-black text-fest-accent px-2 py-0.5 rounded bg-fest-accent/15 border border-fest-accent/30">
                           #{prog.number}
                         </span>
                         <span className="font-mono text-[9px] text-fest-muted tracking-widest uppercase font-semibold">
                           {prog.badge}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-[11px] font-mono text-fest-accentLight font-bold">
+                      <div className="flex items-center gap-1 text-[10px] sm:text-[11px] font-mono text-fest-accentLight font-bold">
                         <Trophy className="w-3.5 h-3.5 text-fest-accent shrink-0" />
                         <span>{prog.prize}</span>
                       </div>
                     </div>
 
-                    {/* Program Title & Subhead (Clean Space Grotesk / Modern Sans) */}
-                    <h3 className="font-display font-black text-2xl sm:text-3xl text-fest-warm tracking-tight">
+                    {/* Program Title & Subhead (Space Grotesk / Modern Geometric Sans) */}
+                    <h3 className="font-display font-black text-xl sm:text-3xl text-fest-warm tracking-tight leading-tight">
                       {prog.name}
                     </h3>
-                    <p className="font-mono text-[10px] sm:text-[11px] text-fest-accent font-bold tracking-wider uppercase mb-1">
+                    <p className="font-mono text-[10px] sm:text-[11px] text-fest-accent font-bold tracking-wider uppercase mb-1 mt-0.5">
                       {prog.subTitle}
                     </p>
                     <p className="text-[11px] sm:text-xs text-fest-muted font-normal leading-snug line-clamp-2">
@@ -529,12 +495,12 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                   </div>
 
                   {/* 2x2 Specs Grid */}
-                  <div className="grid grid-cols-2 gap-1.5 my-2 font-mono text-[11px] bg-white/[0.02] p-2.5 rounded-xl border border-white/[0.06]">
+                  <div className="grid grid-cols-2 gap-1.5 my-1.5 sm:my-2 font-mono text-[10px] sm:text-[11px] bg-white/[0.02] p-2 sm:p-2.5 rounded-xl border border-white/[0.06]">
                     <div className="flex items-start gap-1.5">
                       <Tag className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
                       <div className="leading-snug truncate">
-                        <span className="text-fest-muted text-[9px] block">ENTRY STATUS</span>
-                        <span className="text-fest-warm font-semibold truncate text-[10px] sm:text-[11px]">
+                        <span className="text-fest-muted text-[8px] sm:text-[9px] block">ENTRY STATUS</span>
+                        <span className="text-fest-warm font-semibold truncate text-[9px] sm:text-[10px]">
                           {prog.fee}
                         </span>
                       </div>
@@ -543,8 +509,8 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                     <div className="flex items-start gap-1.5">
                       <Calendar className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
                       <div className="leading-snug truncate">
-                        <span className="text-fest-muted text-[9px] block">SCHEDULE</span>
-                        <span className="text-fest-warm font-semibold truncate text-[10px] sm:text-[11px]">
+                        <span className="text-fest-muted text-[8px] sm:text-[9px] block">SCHEDULE</span>
+                        <span className="text-fest-warm font-semibold truncate text-[9px] sm:text-[10px]">
                           {prog.date}
                         </span>
                       </div>
@@ -553,8 +519,8 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                     <div className="col-span-2 flex items-start gap-1.5 pt-1 border-t border-white/[0.04]">
                       <MapPin className="w-3 h-3 text-fest-accent shrink-0 mt-0.5" />
                       <div className="leading-snug truncate">
-                        <span className="text-fest-muted text-[9px] block">VENUE</span>
-                        <span className="text-fest-warm font-medium truncate text-[10px] sm:text-[11px]">
+                        <span className="text-fest-muted text-[8px] sm:text-[9px] block">VENUE</span>
+                        <span className="text-fest-warm font-medium truncate text-[9px] sm:text-[10px]">
                           {prog.venue}
                         </span>
                       </div>
@@ -573,7 +539,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
                       e.stopPropagation();
                       onOpenRegister?.(prog);
                     }}
-                    className="w-full mt-2.5 py-3 rounded-xl bg-gradient-to-r from-fest-accent to-fest-secondary hover:from-fest-accentLight hover:to-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-[0_4px_18px_rgba(245,158,11,0.35)]"
+                    className="w-full mt-2 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-fest-accent to-fest-secondary hover:from-fest-accentLight hover:to-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 shadow-[0_4px_18px_rgba(245,158,11,0.35)]"
                   >
                     <span>REGISTER FOR {prog.name.toUpperCase()}</span>
                     <Sparkles className="w-3.5 h-3.5 text-fest-black" />
@@ -585,7 +551,7 @@ export function ProgramsLineup({ onOpenRegister, targetIndex }: ProgramsLineupPr
         </div>
 
         {/* Floating Mobile-First Micro-Navigation Bar (Prev, Dots, Next) */}
-        <div className="relative z-20 flex items-center justify-between gap-2 w-full max-w-[340px] sm:max-w-md px-2 py-1.5 rounded-xl bg-[#0E0F17]/90 backdrop-blur-md border border-white/[0.08] shadow-lg">
+        <div className="relative z-20 flex items-center justify-between gap-2 w-full max-w-[340px] sm:max-w-md px-2 py-1.5 rounded-xl bg-[#0E0F16]/90 backdrop-blur-md border border-white/[0.08] shadow-lg">
           <button
             onClick={() => goTo(activeInt - 1)}
             disabled={activeInt === 0}
