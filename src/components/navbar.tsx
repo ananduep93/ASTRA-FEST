@@ -27,7 +27,7 @@ export function Navbar({ onOpenRegister }: NavbarProps) {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-[#060609]/92 backdrop-blur-xl border-b border-white/[0.08] transition-all">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-[#08080C]/92 backdrop-blur-xl border-b border-white/[0.08] transition-all">
       <div className="max-w-7xl mx-auto h-14 sm:h-16 px-4 sm:px-6 lg:px-12 flex items-center justify-between">
         {/* Brand */}
         <a href="#hero" className="flex items-center gap-2.5 group">
@@ -38,7 +38,7 @@ export function Navbar({ onOpenRegister }: NavbarProps) {
               alt="ASTRA Logo"
               width={26}
               height={26}
-              className="relative w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]"
+              className="relative w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(245,158,11,0.65)]"
               priority
             />
           </div>
@@ -67,14 +67,14 @@ export function Navbar({ onOpenRegister }: NavbarProps) {
 
         {/* Right CTA Area */}
         <div className="flex items-center gap-2.5">
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-fest-accent/10 border border-fest-accent/20 text-[10px] font-mono text-fest-accent">
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-fest-accent/10 border border-fest-accent/25 text-[10px] font-mono text-fest-accent">
             <span className="w-1.5 h-1.5 rounded-full bg-fest-accent animate-ping" />
             <span className="tracking-widest uppercase">DON BOSCO MAMPETTA</span>
           </div>
 
           <button
             onClick={onOpenRegister}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-fest-accent text-fest-black text-xs font-display font-black tracking-wider uppercase hover:bg-white transition-all duration-300 shadow-[0_2px_14px_rgba(0,240,255,0.35)] active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-fest-accent text-fest-black text-xs font-display font-black tracking-wider uppercase hover:bg-fest-accentLight transition-all duration-300 shadow-[0_2px_14px_rgba(245,158,11,0.35)] active:scale-95"
           >
             <span>REGISTER</span>
             <ArrowUpRight className="w-3.5 h-3.5 stroke-[3]" />

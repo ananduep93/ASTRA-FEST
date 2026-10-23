@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import { Navbar } from "@/components/navbar";
 import { CosmicCanvas } from "@/components/cosmic-canvas";
 import { Hero } from "@/components/hero";
@@ -29,7 +30,10 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-fest-black text-fest-warm flex flex-col selection:bg-fest-accent selection:text-fest-black overflow-x-clip">
-      {/* Background lightweight cosmic orbital visual with cyber cyan & violet hues */}
+      {/* Silky 120fps Lenis smooth scroll engine for mobile & desktop */}
+      <SmoothScroll />
+
+      {/* Background lightweight cosmic orbital visual with solar gold & amber hues */}
       <CosmicCanvas />
 
       {/* Slim, elegant fixed mobile-first top navigation */}

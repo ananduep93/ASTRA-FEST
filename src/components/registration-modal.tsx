@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import confetti from "canvas-confetti";
 import {
   X,
   CheckCircle2,
@@ -77,6 +78,18 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
     setRegId(generatedId);
     setSubmitted(true);
 
+    // Festive golden confetti burst!
+    try {
+      confetti({
+        particleCount: 90,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ["#F59E0B", "#FBBF24", "#F97316", "#FDE047", "#FFFFFF"],
+      });
+    } catch {
+      // safe fallback
+    }
+
     // Prepare WhatsApp message to Anandu EP
     const msg = encodeURIComponent(
       `*ASTRA 2027 REGISTRATION ENTRY*\n` +
@@ -118,7 +131,7 @@ export function RegistrationModal({ isOpen, onClose, arena }: RegistrationModalP
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: "100%", opacity: 0 }}
           transition={{ type: "spring", damping: 28, stiffness: 280 }}
-          className="relative w-full max-w-lg bg-[#0C0D15] border-t sm:border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-[0_0_60px_rgba(0,240,255,0.15)] z-10 max-h-[92vh] overflow-y-auto scrollbar-none"
+          className="relative w-full max-w-lg bg-[#0C0D15] border-t sm:border border-white/10 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-[0_0_60px_rgba(245,158,11,0.18)] z-10 max-h-[92vh] overflow-y-auto scrollbar-none"
         >
           {/* Top Bar */}
           <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 mb-4">

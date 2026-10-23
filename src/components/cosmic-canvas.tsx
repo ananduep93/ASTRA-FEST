@@ -46,7 +46,7 @@ export function CosmicCanvas() {
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const rand = Math.random();
-      const color = rand > 0.65 ? "#00F0FF" : rand > 0.4 ? "#8B5CF6" : "#FFFFFF";
+      const color = rand > 0.6 ? "#F59E0B" : rand > 0.35 ? "#F97316" : rand > 0.15 ? "#FDE047" : "#FFFFFF";
       particles.push({
         x: 0,
         y: 0,
@@ -99,13 +99,13 @@ export function CosmicCanvas() {
 
       ctx.beginPath();
       ctx.ellipse(cx, cy, ringRadius, ringRadius * 0.42, t * 0.1, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(0, 240, 255, 0.08)";
+      ctx.strokeStyle = "rgba(245, 158, 11, 0.08)";
       ctx.lineWidth = 1;
       ctx.stroke();
 
       ctx.beginPath();
       ctx.ellipse(cx, cy, ringRadius * 1.45, ringRadius * 0.5, -t * 0.07 + 0.8, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(139, 92, 246, 0.06)";
+      ctx.strokeStyle = "rgba(249, 115, 22, 0.06)";
       ctx.lineWidth = 0.8;
       ctx.stroke();
 
@@ -120,10 +120,12 @@ export function CosmicCanvas() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle =
-          p.color === "#00F0FF"
-            ? `rgba(0, 240, 255, ${p.alpha})`
-            : p.color === "#8B5CF6"
-            ? `rgba(139, 92, 246, ${p.alpha})`
+          p.color === "#F59E0B"
+            ? `rgba(245, 158, 11, ${p.alpha})`
+            : p.color === "#F97316"
+            ? `rgba(249, 115, 22, ${p.alpha})`
+            : p.color === "#FDE047"
+            ? `rgba(253, 224, 71, ${p.alpha})`
             : `rgba(255, 255, 255, ${p.alpha})`;
         ctx.fill();
 
@@ -138,7 +140,7 @@ export function CosmicCanvas() {
               ctx.beginPath();
               ctx.moveTo(p.x, p.y);
               ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = "rgba(0, 240, 255, 0.03)";
+              ctx.strokeStyle = "rgba(245, 158, 11, 0.03)";
               ctx.lineWidth = 0.5;
               ctx.stroke();
             }

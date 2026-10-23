@@ -9,7 +9,7 @@ export function Footer() {
   };
 
   return (
-    <footer id="info" className="relative border-t border-white/[0.08] bg-[#050508] py-10 sm:py-14 px-4 sm:px-6 lg:px-12 text-fest-muted text-xs font-mono">
+    <footer id="info" className="relative border-t border-white/[0.08] bg-[#08080C] py-10 sm:py-14 px-4 sm:px-6 lg:px-12 text-fest-muted text-xs font-mono">
       <div className="max-w-5xl mx-auto flex flex-col space-y-8">
         
         {/* Top Strip: Brand & Back to top */}
@@ -21,7 +21,7 @@ export function Footer() {
                 alt="ASTRA Logo"
                 width={24}
                 height={24}
-                className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(0,240,255,0.6)]"
+                className="w-full h-full object-contain filter drop-shadow-[0_0_10px_rgba(245,158,11,0.6)]"
               />
             </div>
             <div>

@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background: #060609;
+  --background: #08080C;
   --foreground: #FFFFFF;
-  --accent: #00F0FF;
-  --secondary: #8B5CF6;
+  --accent: #F59E0B;
+  --secondary: #F97316;
 }
 
 *,
@@ -44,9 +44,9 @@ body {
 
 /* Custom minimal scrollbar */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #060609; }
-::-webkit-scrollbar-thumb { background: #131622; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #00F0FF; }
+::-webkit-scrollbar-track { background: #08080C; }
+::-webkit-scrollbar-thumb { background: #171826; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #F59E0B; }
 
 /* ---- Utility classes ---- */
 

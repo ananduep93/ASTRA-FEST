@@ -10,16 +10,18 @@ const config: Config = {
     extend: {
       colors: {
         fest: {
-          black: "#060609",
-          dark: "#0B0C12",
-          surface: "#10121C",
-          card: "#131622",
-          border: "rgba(0, 240, 255, 0.15)",
+          black: "#08080C",
+          dark: "#0E0F16",
+          surface: "#141520",
+          card: "#171826",
+          border: "rgba(245, 158, 11, 0.2)",
           warm: "#FFFFFF",
           muted: "#94A3B8",
-          accent: "#00F0FF", // Electric Cyber Cyan - High-end, futuristic on black
-          accentHover: "#38BDF8",
-          secondary: "#8B5CF6", // Neon Violet
+          accent: "#F59E0B", // Royal Solar Gold
+          accentLight: "#FBBF24", // Radiant Amber
+          accentHover: "#D97706",
+          secondary: "#F97316", // Warm Solar Flare
+          gold: "#FDE047", // Sparkling Champagne
         },
       },
       fontFamily: {
@@ -36,7 +38,8 @@ const config: Config = {
       },
       boxShadow: {
         "liquid-glass": "0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)",
-        "accent-glow": "0 0 35px rgba(0, 240, 255, 0.45)",
+        "accent-glow": "0 0 35px rgba(245, 158, 11, 0.35)",
+        "gold-halo": "0 0 45px rgba(245, 158, 11, 0.25), 0 0 15px rgba(249, 115, 22, 0.2)",
       },
     },
   },

@@ -79,7 +79,7 @@ export function Hero({ onOpenRegister, onSelectArena }: HeroProps) {
                 lettersRef.current[i] = el;
               }}
               style={{ opacity: 0 }}
-              className="font-display font-black text-[22vw] sm:text-[16vw] md:text-[13rem] text-white astra-letter drop-shadow-[0_0_35px_rgba(0,240,255,0.4)] transition-colors duration-300"
+              className="font-display font-black text-[22vw] sm:text-[16vw] md:text-[13rem] text-white astra-letter drop-shadow-[0_0_40px_rgba(245,158,11,0.3)] transition-colors duration-300"
             >
               {char}
             </span>
@@ -98,7 +98,7 @@ export function Hero({ onOpenRegister, onSelectArena }: HeroProps) {
 
       {/* Impact Metric Matrix (1 Day Fest, Cashpool & Colleges Coming Soon) */}
       <div className="fade-up-element opacity-0 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full max-w-2xl mb-6 font-mono">
-        <div className="p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center">
+        <div className="p-2.5 rounded-xl border border-fest-accent/20 bg-white/[0.02] flex flex-col items-center">
           <span className="text-fest-accent font-black text-base sm:text-lg">15</span>
           <span className="text-fest-muted text-[10px] tracking-widest uppercase">PROGRAMS</span>
         </div>
@@ -110,7 +110,7 @@ export function Hero({ onOpenRegister, onSelectArena }: HeroProps) {
           <span className="text-fest-warm font-black text-xs sm:text-sm tracking-wider uppercase mt-1">COMING SOON</span>
           <span className="text-fest-muted text-[9px] tracking-widest uppercase">COLLEGES</span>
         </div>
-        <div className="p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.02] flex flex-col items-center">
+        <div className="p-2.5 rounded-xl border border-fest-accent/20 bg-white/[0.02] flex flex-col items-center">
           <span className="text-fest-accent font-black text-base sm:text-lg">1 DAY</span>
           <span className="text-fest-muted text-[10px] tracking-widest uppercase">MEGA FEST</span>
         </div>
@@ -120,7 +120,7 @@ export function Hero({ onOpenRegister, onSelectArena }: HeroProps) {
       <div className="fade-up-element opacity-0 flex flex-col sm:flex-row items-center gap-3 w-full max-w-xs sm:max-w-md">
         <a
           href="#programs"
-          className="w-full sm:w-1/2 py-3 px-6 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-white transition-all duration-300 shadow-[0_4px_24px_rgba(0,240,255,0.35)] active:scale-95"
+          className="w-full sm:w-1/2 py-3 px-6 rounded-xl bg-fest-accent text-fest-black font-display font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-fest-accentLight transition-all duration-300 shadow-[0_4px_24px_rgba(245,158,11,0.35)] active:scale-95"
         >
           <span>VIEW 15 EVENTS</span>
           <ArrowDown className="w-3.5 h-3.5 stroke-[3]" />
